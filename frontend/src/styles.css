@@ -1,15 +1,17 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-body {
-  @apply m-0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@theme {
+  --font-poppins: Poppins, sans-serif;
+  --color-purple-primary: #3e3052;
+  --color-purple-dark: #6b5ff3;
+  --color-purple-light: #aea7ff;
+  --color-likes-pink: #f91880;
+  --color-primary-black: #170e23;
+  --color-primary-white: #fff;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+body {
+  @apply m-0 font-poppins bg-purple-primary;
+  /* -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; */
 }
