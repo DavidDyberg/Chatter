@@ -2,7 +2,7 @@ import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanstackDevtools } from '@tanstack/react-devtools'
 
-import Header from '../components/Header'
+import Sidebar from '../components/Sidebar'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
@@ -15,9 +15,13 @@ interface MyRouterContext {
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: () => (
     <>
-      <div className="md:px-20 px-4">
-        <Header />
-        <Outlet />
+      <div className="md:grid min-h-screen md:grid-cols-[230px_1fr] md:px-20 px-4">
+        <aside className="md:border-r md:border-gray-800">
+          <Sidebar />
+        </aside>
+        <main>
+          <Outlet />
+        </main>
       </div>
       <TanstackDevtools
         config={{
