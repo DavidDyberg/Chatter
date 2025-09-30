@@ -6,8 +6,8 @@ export const Route = createFileRoute('/')({
 
 function App() {
   return (
-    <div>
-      <p className="text-white font-poppins">Homepage</p>
+    <div className="pt-8">
+      <p className="font-poppins">Homepage</p>
     </div>
   )
 }
