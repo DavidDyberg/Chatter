@@ -4,7 +4,7 @@ import { House, Search, MessageCircleMore, CircleUserRound } from 'lucide-react'
 export default function Sidebar() {
   return (
     <header className="text-white pt-8">
-      <h1 className="font-bold text-white text-2xl">Chatter</h1>
+      <h1 className="font-bold text-white text-3xl">Chatter</h1>
       <nav className="flex flex-col gap-8 pt-8">
         <Link
           activeProps={{ style: { fontWeight: 600 } }}
