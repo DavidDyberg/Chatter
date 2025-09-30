@@ -11,7 +11,7 @@
 }
 
 body {
-  @apply m-0 font-poppins bg-purple-primary;
+  @apply m-0 font-poppins bg-purple-primary text-white;
   /* -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; */
 }
