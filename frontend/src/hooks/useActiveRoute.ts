@@ -1,6 +1,6 @@
-import { useRouterState } from '@tanstack/react-router'
+import { useRouterState, type LinkProps } from '@tanstack/react-router'
 
 export function useActiveRoute() {
   const { location } = useRouterState()
-  return (path: string) => location.pathname === path
+  return (path: LinkProps['to']) => location.pathname === path
 }
