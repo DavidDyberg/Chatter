@@ -1,5 +1,8 @@
 import express from "express";
 import type { Request, Response } from "express";
+import { connectDB } from "./database/db";
+
+connectDB();
 
 const app = express();
 const port = 8080;
