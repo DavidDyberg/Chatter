@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "module": "index.js",
+  "scripts": {
+    "dev": "bun --hot run index.ts"
+  },
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/express": "^5.0.3",
+    "prisma": "^6.16.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.16.3",
+    "express": "^5.1.0",
+    "mongodb": "^6.20.0"
+  }
+}
