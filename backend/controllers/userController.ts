@@ -34,6 +34,11 @@ export const getUserById = async (req: Request, res: Response) => {
       include: {
         posts: {
           include: {
+            likes: {
+              include: {
+                user: true,
+              },
+            },
             comments: {
               include: {
                 likes: {
@@ -43,6 +48,12 @@ export const getUserById = async (req: Request, res: Response) => {
                 },
               },
             },
+          },
+        },
+        comments: {
+          include: {
+            post: true,
+            likes: true,
           },
         },
       },
