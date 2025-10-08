@@ -2,12 +2,13 @@
   "name": "backend",
   "module": "index.js",
   "scripts": {
-    "dev": "bun --hot run index.ts"
+    "dev": "bun --hot run api/index.ts"
   },
   "type": "module",
   "private": true,
   "devDependencies": {
     "@types/bun": "latest",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "prisma": "^6.16.3"
   },
@@ -16,6 +17,7 @@
   },
   "dependencies": {
     "@prisma/client": "^6.16.3",
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "mongodb": "^6.20.0"
   }
