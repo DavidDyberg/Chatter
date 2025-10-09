@@ -1,12 +1,7 @@
 import type { Request, Response } from "express";
 import { PrismaClient } from "../generated/prisma";
 import cloudinary from "../utils/cloudinary";
-
-interface CloudinaryFile extends Express.Multer.File {
-  path: string;
-  filename: string;
-  public_id?: string;
-}
+import type { CloudinaryFile } from "../types/types";
 
 const prisma = new PrismaClient();
 
