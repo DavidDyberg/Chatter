@@ -95,6 +95,30 @@ export const createUser = async (req: Request, res: Response) => {
   }
 };
 
+export const updateUser = async (req: Request, res: Response) => {
+  try {
+    const { userName, email, bio, profileImage, profileBanner } = req.body;
+    const { id } = req.params;
+    const user = await prisma.user.update({
+      where: { id: id },
+      data: {
+        userName,
+        email,
+        bio,
+        profileImage,
+        profileBanner,
+      },
+    });
+    res.status(200).json({ message: "User was updated sucessfully", user });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(400).json({ message: error.message });
+    } else {
+      res.status(400).json({ message: "An unknown error has occurred" });
+    }
+  }
+};
+
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
