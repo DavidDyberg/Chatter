@@ -10,6 +10,7 @@
     "@types/bun": "latest",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
+    "@types/multer": "^2.0.0",
     "prisma": "^6.16.3"
   },
   "peerDependencies": {
@@ -17,8 +18,11 @@
   },
   "dependencies": {
     "@prisma/client": "^6.16.3",
+    "cloudinary": "^2.7.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "mongodb": "^6.20.0"
+    "mongodb": "^6.20.0",
+    "multer": "^2.0.2",
+    "multer-storage-cloudinary": "^4.0.0"
   }
 }

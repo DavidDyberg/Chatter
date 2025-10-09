@@ -73,15 +73,19 @@ export const getUserById = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const { userName, email, bio, profileImage, profileBanner, role } =
-      req.body;
+    const { userName, email, bio, role } = req.body;
+    const profileImageUrl = req.file ? req.file.path : "";
+    const profileImageId = req.file?.fieldname;
+
+    const bannerImageUrl = req.file ? req.file.path : "";
+    const bannerImageId = req.file?.fieldname;
     const user = await prisma.user.create({
       data: {
         userName,
         email,
         bio,
-        profileImage,
-        profileBanner,
+        profileImage: profileImageUrl,
+        profileBanner: bannerImageUrl,
         role,
       },
     });
@@ -97,16 +101,21 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const { userName, email, bio, profileImage, profileBanner } = req.body;
     const { id } = req.params;
+    const { userName, email, bio } = req.body;
+    const profileImageUrl = req.file ? req.file.path : req.body.existingImage;
+    const profileImageId = req.file?.fieldname;
+    const bannerImageUrl = req.file ? req.file.path : req.body.existingImage;
+    const bannerImageId = req.file?.fieldname;
+
     const user = await prisma.user.update({
       where: { id: id },
       data: {
         userName,
         email,
         bio,
-        profileImage,
-        profileBanner,
+        profileImage: profileImageUrl,
+        profileBanner: bannerImageUrl,
       },
     });
     res.status(200).json({ message: "User was updated sucessfully", user });
