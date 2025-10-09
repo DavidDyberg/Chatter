@@ -20,15 +20,17 @@ enum Role {
 }
 
 model User {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  userName      String
-  email         String   @unique
-  bio           String?
-  profileImage  String?
-  profileBanner String?
-  role          Role     @default(USER)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userName        String
+  email           String   @unique
+  bio             String?
+  profileImage    String?
+  profileImageId  String?
+  profileBanner   String?
+  profileBannerId String?
+  role            Role     @default(USER)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   posts    Post[]
   comments Comment[]
