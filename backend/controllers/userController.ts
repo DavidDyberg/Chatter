@@ -79,13 +79,13 @@ export const createUser = async (req: Request, res: Response) => {
     const files =
       (req.files as { [fieldname: string]: CloudinaryFile[] }) || {};
 
-    const profileImageUrl = files?.profileImage?.[0]?.path || "";
+    const profileImageUrl = files?.profileImage?.[0]?.path || null;
     const profileImageId =
       files?.profileImage?.[0]?.filename ||
       files?.profileImage?.[0]?.public_id ||
       "";
 
-    const bannerImageUrl = files?.profileBanner?.[0]?.path || "";
+    const bannerImageUrl = files?.profileBanner?.[0]?.path || null;
     const bannerImageId =
       files?.profileBanner?.[0]?.filename ||
       files?.profileBanner?.[0]?.public_id ||
@@ -159,7 +159,11 @@ export const updateUser = async (req: Request, res: Response) => {
       .status(200)
       .json({ message: "User updated successfully", user: updatedUser });
   } catch (error) {
-    res.status(400).json({ message: (error as Error).message });
+    if (error instanceof Error) {
+      res.status(400).json({ message: error.message });
+    } else {
+      res.status(400).json({ message: "An unknown error has occurred" });
+    }
   }
 };
 
