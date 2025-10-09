@@ -6,11 +6,26 @@ import {
   getUsers,
   updateUser,
 } from "../../controllers/userController";
+import { upload } from "../../middleware/upload";
 
 export const userRouter = Router();
 
 userRouter.get("/user", getUsers);
 userRouter.get("/user/:id", getUserById);
-userRouter.post("/user", createUser);
-userRouter.put("/user/:id", updateUser);
+userRouter.post(
+  "/user",
+  upload.fields([
+    { name: "profileImage", maxCount: 1 },
+    { name: "profileBanner", maxCount: 1 },
+  ]),
+  createUser
+);
+userRouter.put(
+  "/user/:id",
+  upload.fields([
+    { name: "profileImage", maxCount: 1 },
+    { name: "profileBanner", maxCount: 1 },
+  ]),
+  updateUser
+);
 userRouter.delete("/user/:id", deleteUser);
