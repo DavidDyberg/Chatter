@@ -10,8 +10,8 @@ import { upload } from "../../middleware/upload";
 
 export const postRouter = Router();
 
-postRouter.get("/posts", getPosts);
-postRouter.get("/posts/:id", getPostById);
+postRouter.get("/post", getPosts);
+postRouter.get("/post/:id", getPostById);
 postRouter.post(
   "/post",
   upload.fields([{ name: "image", maxCount: 1 }]),
