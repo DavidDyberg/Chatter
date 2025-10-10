@@ -18,6 +18,7 @@ export function Auth0Wrapper({ children }: { children: React.ReactNode }) {
       clientId={import.meta.env.VITE_AUTH0_CLIENT_ID}
       authorizationParams={{
         redirect_uri: window.location.origin,
+        audience: 'https://dev-cjzvm88dsutamr5k.eu.auth0.com/api/v2/',
       }}
       cacheLocation="localstorage"
       useRefreshTokens={true}
