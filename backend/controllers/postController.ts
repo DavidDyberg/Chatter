@@ -104,7 +104,7 @@ export const createPost = async (req: Request, res: Response) => {
 
     const imageUrl = files?.image?.[0]?.path || null;
     const imageId =
-      files?.image?.[0]?.filename || files?.image?.[0]?.public_id || "";
+      files?.image?.[0]?.filename || files?.image?.[0]?.public_id || null;
 
     const post = await prisma.post.create({
       data: {
