@@ -35,6 +35,7 @@ export const getUserById = async (req: Request, res: Response) => {
       where: { id: id },
       include: {
         posts: {
+          orderBy: [{ createdAt: "desc" }],
           include: {
             likes: {
               include: {
@@ -42,6 +43,7 @@ export const getUserById = async (req: Request, res: Response) => {
               },
             },
             comments: {
+              orderBy: [{ createdAt: "desc" }],
               include: {
                 likes: {
                   include: {
@@ -83,13 +85,13 @@ export const createUser = async (req: Request, res: Response) => {
     const profileImageId =
       files?.profileImage?.[0]?.filename ||
       files?.profileImage?.[0]?.public_id ||
-      "";
+      null;
 
     const bannerImageUrl = files?.profileBanner?.[0]?.path || null;
     const bannerImageId =
       files?.profileBanner?.[0]?.filename ||
       files?.profileBanner?.[0]?.public_id ||
-      "";
+      null;
 
     const user = await prisma.user.create({
       data: {
