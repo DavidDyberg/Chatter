@@ -8,6 +8,7 @@ const prisma = new PrismaClient();
 export const getPosts = async (req: Request, res: Response) => {
   try {
     const posts = await prisma.post.findMany({
+      orderBy: [{ createdAt: "desc" }],
       include: {
         _count: {
           select: {

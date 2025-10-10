@@ -35,6 +35,7 @@ export const getUserById = async (req: Request, res: Response) => {
       where: { id: id },
       include: {
         posts: {
+          orderBy: [{ createdAt: "desc" }],
           include: {
             likes: {
               include: {
@@ -42,6 +43,7 @@ export const getUserById = async (req: Request, res: Response) => {
               },
             },
             comments: {
+              orderBy: [{ createdAt: "desc" }],
               include: {
                 likes: {
                   include: {
