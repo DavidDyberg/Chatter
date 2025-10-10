@@ -92,8 +92,8 @@ export const createPost = async (req: Request, res: Response) => {
   try {
     const { content, userId } = req.body || {};
 
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) {
+    const postAuthor = await prisma.user.findUnique({ where: { id: userId } });
+    if (!postAuthor) {
       return res
         .status(404)
         .json({ message: `User with id: ${userId} do not exist` });
@@ -124,8 +124,27 @@ export const createPost = async (req: Request, res: Response) => {
   }
 };
 
-export const updatePost = (req: Request, res: Response) => {
+export const updatePost = async (req: Request, res: Response) => {
   try {
+    const { id } = req.params;
+    const { content } = req.body;
+
+    const files =
+      (req.files as { [fieldname: string]: CloudinaryFile[] }) || {};
+
+    const imageUrl = files?.image?.[0]?.path || null;
+    const imageId =
+      files?.image?.[0]?.filename || files?.image?.[0]?.public_id || null;
+
+    const updatedPost = await prisma.post.update({
+      where: { id },
+      data: {
+        content,
+        image: imageUrl,
+        imageId: imageId,
+      },
+    });
+    res.status(200).json({ message: "Post updated successfully", updatedPost });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ message: error.message });
@@ -135,8 +154,21 @@ export const updatePost = (req: Request, res: Response) => {
   }
 };
 
-export const deletePost = (req: Request, res: Response) => {
+export const deletePost = async (req: Request, res: Response) => {
   try {
+    const { id } = req.params;
+    const post = await prisma.post.findUnique({
+      where: { id },
+    });
+
+    if (post?.imageId) {
+      await cloudinary.uploader.destroy(post.imageId);
+    }
+
+    await prisma.post.delete({
+      where: { id },
+    });
+    res.status(200).json({ message: "Post was deleted successfully", post });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ message: error.message });

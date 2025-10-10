@@ -17,5 +17,9 @@ postRouter.post(
   upload.fields([{ name: "image", maxCount: 1 }]),
   createPost
 );
-postRouter.put("/post/:id", updatePost);
+postRouter.put(
+  "/post/:id",
+  upload.fields([{ name: "image", maxCount: 1 }]),
+  updatePost
+);
 postRouter.delete("/post/:id", deletePost);
