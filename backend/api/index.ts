@@ -2,8 +2,9 @@ import express from "express";
 import type { Request, Response } from "express";
 import { connectDB } from "../database/db";
 import { userRouter } from "./routes/userRoutes";
-import cors from "cors";
 import { postRouter } from "./routes/postRoutes";
+import { commentRouter } from "./routes/commentRoutes";
+import cors from "cors";
 
 connectDB();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api", userRouter);
 app.use("/api", postRouter);
+app.use("/api", commentRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("CHATTER");
