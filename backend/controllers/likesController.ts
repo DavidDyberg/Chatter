@@ -7,6 +7,27 @@ export const likePost = async (req: Request, res: Response) => {
   const { postId } = req.params;
   const { userId } = req.body;
   try {
+    if (!postId || !userId) {
+      return res
+        .status(400)
+        .json({ message: "postId and userId are required" });
+    }
+
+    const existingLike = await prisma.like.findUnique({
+      where: {
+        userId_postId: {
+          userId,
+          postId,
+        },
+      },
+    });
+
+    if (existingLike) {
+      return res
+        .status(400)
+        .json({ message: `Post already liked by user: ${userId}` });
+    }
+
     const like = await prisma.like.create({
       data: { userId, postId },
     });
@@ -42,10 +63,27 @@ export const likeComment = async (req: Request, res: Response) => {
   const { commentId } = req.params;
   const { userId } = req.body;
   try {
+    if (!commentId || !userId) {
+      return res.status(404).json("ComentId and UserId required");
+    }
+
+    const existingLike = await prisma.like.findUnique({
+      where: {
+        userId_commentId: {
+          userId,
+          commentId,
+        },
+      },
+    });
+
+    if (existingLike) {
+      return res.status(400).json(`Comment already liked by user: ${userId}`);
+    }
+
     const like = await prisma.like.create({
       data: { userId, commentId },
     });
-    res.status(201).json(like);
+    res.status(201).json({ message: "Comment was liked", like });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ message: error.message });
