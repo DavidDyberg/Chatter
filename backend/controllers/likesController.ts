@@ -10,7 +10,8 @@ export const likePost = async (req: Request, res: Response) => {
     const like = await prisma.like.create({
       data: { userId, postId },
     });
-    res.status(201).json(like);
+
+    res.status(201).json({ message: "The post was liked", like });
   } catch (error) {
     if (error instanceof Error) {
       res.status(500).json({ message: error.message });

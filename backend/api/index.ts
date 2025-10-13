@@ -5,6 +5,7 @@ import { userRouter } from "./routes/userRoutes";
 import { postRouter } from "./routes/postRoutes";
 import { commentRouter } from "./routes/commentRoutes";
 import cors from "cors";
+import { likesRouter } from "./routes/likeRoutes";
 
 connectDB();
 
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api", userRouter);
 app.use("/api", postRouter);
 app.use("/api", commentRouter);
+app.use("/api", likesRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("CHATTER");
