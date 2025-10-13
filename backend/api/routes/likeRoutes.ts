@@ -9,6 +9,6 @@ import {
 export const likesRouter = Router();
 
 likesRouter.post("/post/:postId/like", likePost);
-likesRouter.delete("/post/:id/like", unlikePost);
-likesRouter.post("/comment/:id/like", likeComment);
-likesRouter.delete("/comment/:id/like", unlikeComment);
+likesRouter.delete("/post/:postId/like", unlikePost);
+likesRouter.post("/comment/:commentId/like", likeComment);
+likesRouter.delete("/comment/:commentId/like", unlikeComment);
