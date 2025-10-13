@@ -9,7 +9,7 @@ export const likePost = async (req: Request, res: Response) => {
   try {
     if (!postId || !userId) {
       return res
-        .status(400)
+        .status(409)
         .json({ message: "postId and userId are required" });
     }
 
@@ -64,7 +64,7 @@ export const likeComment = async (req: Request, res: Response) => {
   const { userId } = req.body;
   try {
     if (!commentId || !userId) {
-      return res.status(404).json("ComentId and UserId required");
+      return res.status(409).json("ComentId and UserId required");
     }
 
     const existingLike = await prisma.like.findUnique({
