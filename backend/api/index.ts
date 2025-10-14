@@ -10,7 +10,7 @@ import { likesRouter } from "./routes/likeRoutes";
 connectDB();
 
 const app = express();
-const port = 8080;
+const port = process.env.PORT;
 
 app.use(cors());
 app.use(express.json());
