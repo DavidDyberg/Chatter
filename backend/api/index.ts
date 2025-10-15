@@ -6,6 +6,7 @@ import { postRouter } from "./routes/postRoutes";
 import { commentRouter } from "./routes/commentRoutes";
 import cors from "cors";
 import { likesRouter } from "./routes/likeRoutes";
+import { authRouter } from "./routes/authRoutes";
 
 connectDB();
 
@@ -15,6 +16,7 @@ const port = process.env.PORT;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/api", authRouter);
 app.use("/api", userRouter);
 app.use("/api", postRouter);
 app.use("/api", commentRouter);
