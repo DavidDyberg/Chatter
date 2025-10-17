@@ -2,7 +2,8 @@
   "name": "backend",
   "module": "index.js",
   "scripts": {
-    "dev": "bun --hot run api/index.ts"
+    "dev": "bun --hot run api/index.ts",
+    "deploy": "prisma generate && bun run api/index.ts"
   },
   "type": "module",
   "private": true,
