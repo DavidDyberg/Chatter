@@ -63,7 +63,9 @@ export const getUserById = async (req: Request, res: Response) => {
       },
     });
     if (!user) {
-      res.status(404).json({ message: "No user with the specified id exists" });
+      return res
+        .status(404)
+        .json({ message: "No user with the specified id exists" });
     }
     res.json(user);
   } catch (error) {
@@ -187,7 +189,7 @@ export const deleteUser = async (req: Request, res: Response) => {
       where: { id },
     });
     if (!user) {
-      res.status(404).json({ message: "No user found" });
+      return res.status(404).json({ message: "No user found" });
     }
     res.status(200).json({ message: "User was deleted successfully", user });
   } catch (error) {
