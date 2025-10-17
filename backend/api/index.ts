@@ -26,6 +26,15 @@ app.get("/", (req: Request, res: Response) => {
   res.send("CHATTER");
 });
 
+setInterval(async () => {
+  try {
+    const res = await fetch("https://chatter-r8i2.onrender.com/");
+    console.log(`Self ping OK: ${res.status}`);
+  } catch (error) {
+    console.error("Could not self ping:", error);
+  }
+}, 14 * 60 * 1000);
+
 app.listen(port, () => {
   console.log(`Server is listening on port http://localhost:${port}`);
 });
