@@ -23,7 +23,7 @@ app.use("/api", commentRouter);
 app.use("/api", likesRouter);
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("CHATTER");
+  res.send("Hello Chatter");
 });
 
 setInterval(async () => {
