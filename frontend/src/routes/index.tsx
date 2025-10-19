@@ -11,24 +11,23 @@ function App() {
   useEffect(() => {
     async function hej() {
       const token = await getAccessTokenSilently()
-      const response = await fetch('http://localhost:8080/api/user', {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await fetch(
+        'https://chatter-r8i2.onrender.com/api/user',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      })
+      )
       console.log(response.status)
     }
     hej()
   }, [])
 
-  const { loginWithRedirect, logout, user } = useAuth0()
+  const { user } = useAuth0()
   return (
     <div className="pt-8">
       <p className="font-poppins">Homepage</p>
-
-      {!user && <button onClick={() => loginWithRedirect()}>Login</button>}
-      {user && <button onClick={() => logout()}>Logout</button>}
-
       {user?.name}
     </div>
   )
