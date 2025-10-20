@@ -1,4 +1,5 @@
 import { BadgeCheck, Heart, MessageCircle } from 'lucide-react'
+import { cn } from '@/utils/classnames'
 
 type PostComponentProps = {
   content: string
@@ -10,6 +11,7 @@ type PostComponentProps = {
   created_at: string
   isAdmin: boolean
   onClick?: () => void
+  className?: string
 }
 
 export const PostComponent: React.FC<PostComponentProps> = ({
@@ -22,9 +24,10 @@ export const PostComponent: React.FC<PostComponentProps> = ({
   created_at,
   isAdmin,
   onClick,
+  className,
 }) => {
   return (
-    <section onClick={onClick} className="flex gap-2">
+    <section onClick={onClick} className={cn('flex gap-2', className)}>
       <img
         className="w-12 h-12 rounded-full object-cover"
         src={authorImage}

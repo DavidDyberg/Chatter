@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect } from 'react'
 import { PostComponent } from '@/components/PostComponent'
+import { ButtonComponen } from '@/components/Button'
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -28,10 +29,13 @@ function App() {
   const { user } = useAuth0()
   return (
     <div className="pt-8">
-      <p className="font-poppins">Homepage</p>
-      {user?.name}
+      <div className="flex items-center justify-between">
+        <p className="text-2xl font-bold">Welcome {user?.name}</p>
+        <ButtonComponen variant="Primary" label="Post" />
+      </div>
 
       <PostComponent
+        className="pt-4"
         likesAmmount={134}
         commentsAmmount={5}
         created_at="12 Jan 2026"
