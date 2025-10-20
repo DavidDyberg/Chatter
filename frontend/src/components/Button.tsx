@@ -7,7 +7,7 @@ type ButtonProps = {
   OnClick?: () => void
 }
 
-export const ButtonComponen: React.FC<ButtonProps> = ({
+export const ButtonComponent: React.FC<ButtonProps> = ({
   label,
   variant,
   OnClick,
