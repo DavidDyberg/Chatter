@@ -16,6 +16,7 @@ export const getPosts = async (req: Request, res: Response) => {
             comments: true,
           },
         },
+        user: true,
         comments: {
           include: {
             user: true,
