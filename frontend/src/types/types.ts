@@ -3,7 +3,7 @@ export type User = {
   userName: string
   email: string
   bio?: string
-  profileImage?: string
+  profileImage: string | null
   profileImageId?: string
   profileBanner?: string
   profileBannerId?: string
@@ -15,13 +15,14 @@ export type User = {
 export type Post = {
   id: string
   content: string
-  image?: string
+  image: string | null
   imageId?: string
   createdAt: string
   updatedAt: string
   user_id: string
   _count: Count
   comments: Comment[]
+  user: User
 }
 
 export type Comment = {
