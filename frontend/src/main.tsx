@@ -13,11 +13,10 @@ import reportWebVitals from './reportWebVitals.ts'
 
 // Create a new router instance
 
-const TanStackQueryProviderContext = TanStackQueryProvider.getContext()
 const router = createRouter({
   routeTree,
   context: {
-    ...TanStackQueryProviderContext,
+    ...TanStackQueryProvider.getContext(),
   },
   defaultPreload: 'intent',
   scrollRestoration: true,
@@ -39,7 +38,7 @@ if (rootElement && !rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <Auth0Wrapper>
-        <TanStackQueryProvider.Provider {...TanStackQueryProviderContext}>
+        <TanStackQueryProvider.Provider>
           <RouterProvider router={router} />
         </TanStackQueryProvider.Provider>
       </Auth0Wrapper>
