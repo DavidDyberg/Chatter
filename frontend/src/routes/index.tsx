@@ -3,7 +3,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect } from 'react'
 import { PostComponent } from '@/components/PostComponent'
 import { ButtonComponent } from '@/components/Button'
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { fetchPosts } from '@/api-routes/posts'
 
 export const Route = createFileRoute('/')({
@@ -44,7 +44,7 @@ function App() {
 
   const { user } = useAuth0()
   return (
-    <div className="pt-8">
+    <div className="pt-8 pl-4 pr-4">
       <div className="flex items-center justify-between">
         <p className="text-2xl font-bold">Welcome {user?.name}</p>
         <ButtonComponent variant="Primary" label="Post" />
@@ -59,16 +59,10 @@ function App() {
             commentsAmmount={post._count.comments}
             created_at={post.createdAt}
             content={post.content}
-            authorName="David"
-            authorImage={
-              post.user.profileImage ||
-              'https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/396e9/MainBefore.jpg'
-            }
-            postImage={
-              post.image ||
-              'https://letsenhance.io/static/73136da51c245e80edc6ccfe44888a99/396e9/MainBefore.jpg'
-            }
-            isAdmin
+            authorName={post.user.userName}
+            authorImage={post.user.profileImage}
+            postImage={post.image}
+            isAdmin={post.user.role === 'ADMIN'}
           />
         ))}
       </div>

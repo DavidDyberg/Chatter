@@ -2,12 +2,12 @@ export type User = {
   id: string
   userName: string
   email: string
-  bio?: string
-  profileImage: string | null
+  bio: string
+  profileImage: string
   profileImageId?: string
   profileBanner?: string
   profileBannerId?: string
-  role: 'USER' | 'ADMIN'
+  role?: 'USER' | 'ADMIN'
   createdAt?: string
   updatedAt?: string
 }
@@ -15,7 +15,7 @@ export type User = {
 export type Post = {
   id: string
   content: string
-  image: string | null
+  image: string
   imageId?: string
   createdAt: string
   updatedAt: string
