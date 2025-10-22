@@ -44,7 +44,7 @@ function App() {
               created_at={post.createdAt}
               content={post.content}
               authorName={post.user.userName}
-              authorImage={post.user.profileImage}
+              authorImage={post.user.profileImage || '/blank-profile.webp'}
               postImage={post.image}
               isAdmin={post.user.role === 'ADMIN'}
             />

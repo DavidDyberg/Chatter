@@ -19,43 +19,39 @@ export const Route = createFileRoute('/profile/$profileId')({
 function RouteComponent() {
   const params = useParams({ from: '/profile/$profileId' })
 
-  console.log('PARAMS', params)
-
-  const { data } = useQuery({
+  const { data: userData } = useQuery({
     queryKey: ['user', params.profileId],
     queryFn: () => getUser(params.profileId),
   })
-
-  console.log(data)
 
   return (
     <section className="relative">
       <div className="relative">
         <img
           className="max-h-[200px] w-full object-cover"
-          src={data?.profileBanner || '/default-banner.svg'}
+          src={userData?.profileBanner || '/default-banner.svg'}
           alt="Profile banner"
         />
 
         <img
           className="absolute left-5 md:-bottom-[60px] -bottom-[50px] md:w-[120px] w-[100px] rounded-full object-cover"
-          src={data?.profileImage}
+          src={userData?.profileImage || '/blank-profile.webp'}
           alt="Profile"
         />
       </div>
       <div className="pb-[70px]" />
 
-      <div className="pl-5 flex flex-col gap-4">
+      <div className="px-5 flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <div>
             <div className="flex items-center gap-1">
-              <p className="font-bold text-xl">{data?.userName}</p>
-              {data?.role === 'ADMIN' && (
+              <p className="font-bold text-xl">{userData?.userName}</p>
+              {userData?.role === 'ADMIN' && (
                 <BadgeCheck className="ml-1" color="#6B5FF3" />
               )}
             </div>
             <p className="text-purple-light text-sm">
-              Joined {formatDate(data?.createdAt)}
+              Joined {formatDate(userData?.createdAt)}
             </p>
           </div>
 
@@ -65,7 +61,7 @@ function RouteComponent() {
             variant="Seacondary"
           />
         </div>
-        <p>{data?.bio}</p>
+        <p>{userData?.bio}</p>
       </div>
 
       <div className="flex flex-col items-center gap-2">
@@ -73,18 +69,21 @@ function RouteComponent() {
         <ChevronsDown size={34} />
       </div>
 
-      <div className="pl-5 pt-5">
-        {data?.posts.map((post) => (
+      {userData?.posts.length === 0 && (
+        <p className="text-center pt-5">You currently have no posts.</p>
+      )}
+      <div className="px-5 pt-5">
+        {userData?.posts.map((post) => (
           <PostComponent
             key={post.id}
             content={post.content}
-            authorName={data.userName}
-            authorImage={data.profileImage}
+            authorName={userData.userName}
+            authorImage={userData.profileImage || '/blank-profile.webp'}
             postImage={post.image}
             likesAmmount={post._count.likes}
             commentsAmmount={post._count.comments}
             created_at={formatDate(post.createdAt)}
-            isAdmin={data.role === 'ADMIN'}
+            isAdmin={userData.role === 'ADMIN'}
           />
         ))}
       </div>
