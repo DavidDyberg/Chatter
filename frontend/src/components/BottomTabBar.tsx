@@ -43,11 +43,14 @@ export default function BottomTabBar() {
       )}
       {user && (
         <Link
+          params={{ profileId: user.sub || '' }}
           to="/profile/$profileId"
           className="flex flex-col items-center gap-1"
         >
           <CircleUserRound
-            className={isActiveRoute('/profile') ? 'stroke-2' : 'stroke-1'}
+            className={
+              isActiveRoute('/profile/$profileId') ? 'stroke-2' : 'stroke-1'
+            }
           />
           <span>Profile</span>
         </Link>

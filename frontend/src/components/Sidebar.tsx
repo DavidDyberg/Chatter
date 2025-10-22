@@ -57,7 +57,9 @@ export default function Sidebar() {
               to="/profile/$profileId"
             >
               <CircleUserRound
-                className={isActiveRoute('/profile') ? 'stroke-3' : 'stroke-2'}
+                className={
+                  isActiveRoute('/profile/$profileId') ? 'stroke-3' : 'stroke-2'
+                }
               />
               <p>Profile</p>
             </Link>
