@@ -73,6 +73,9 @@ function RouteComponent() {
         <ChevronsDown size={34} />
       </div>
 
+      {!data?.posts && (
+        <p className="text-center pt-5">You currently have no posts.</p>
+      )}
       <div className="pl-5 pt-5">
         {data?.posts.map((post) => (
           <PostComponent
