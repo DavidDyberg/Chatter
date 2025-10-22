@@ -4,6 +4,7 @@ import { createFileRoute, useParams } from '@tanstack/react-router'
 import defaultBanner from '../../../public/default-banner.svg'
 import { BadgeCheck } from 'lucide-react'
 import { ButtonComponent } from '@/components/Button'
+import { formatDate } from '@/utils/formatDate'
 
 export const Route = createFileRoute('/profile/$profileId')({
   component: RouteComponent,
@@ -45,15 +46,19 @@ function RouteComponent() {
       <div className="pb-[70px]" />
 
       <div className="pl-5 flex flex-col gap-4">
-        <div className="flex justify-between items-start">
-          <div className="flex  gap-1">
-            <div>
+        <div className="flex justify-between items-center">
+          <div>
+            <div className="flex items-center gap-1">
               <p className="font-bold text-xl">{data?.userName}</p>
-              <p className="text-purple-light text-sm">{data?.createdAt}</p>
+              {data?.role === 'ADMIN' && (
+                <BadgeCheck className="ml-1" color="#6B5FF3" />
+              )}
             </div>
-
-            {data?.role === 'ADMIN' && <BadgeCheck color="#6B5FF3" />}
+            <p className="text-purple-light text-sm">
+              Joined {formatDate(data?.createdAt)}
+            </p>
           </div>
+
           <ButtonComponent
             className="p-2 pl-4 pr-4"
             label="Edit profile"
