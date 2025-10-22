@@ -1,7 +1,6 @@
 import { getUser } from '@/api-routes/user'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
-import defaultBanner from '../../../public/default-banner.svg'
 import { BadgeCheck } from 'lucide-react'
 import { ButtonComponent } from '@/components/Button'
 import { formatDate } from '@/utils/formatDate'
@@ -33,7 +32,7 @@ function RouteComponent() {
       <div className="relative">
         <img
           className="max-h-[200px] w-full object-cover"
-          src={data?.profileBanner || defaultBanner}
+          src={data?.profileBanner || '/default-banner.svg'}
           alt="Profile banner"
         />
 
