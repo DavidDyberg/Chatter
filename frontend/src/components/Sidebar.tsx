@@ -51,9 +51,10 @@ export default function Sidebar() {
         {user && (
           <>
             <Link
+              params={{ profileId: user.sub || '' }}
               activeProps={{ style: { fontWeight: 600 } }}
               className="flex gap-4 items-center"
-              to="/profile"
+              to="/profile/$profileId"
             >
               <CircleUserRound
                 className={isActiveRoute('/profile') ? 'stroke-3' : 'stroke-2'}

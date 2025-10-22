@@ -42,7 +42,10 @@ export default function BottomTabBar() {
         </div>
       )}
       {user && (
-        <Link to="/profile" className="flex flex-col items-center gap-1">
+        <Link
+          to="/profile/$profileId"
+          className="flex flex-col items-center gap-1"
+        >
           <CircleUserRound
             className={isActiveRoute('/profile') ? 'stroke-2' : 'stroke-1'}
           />
