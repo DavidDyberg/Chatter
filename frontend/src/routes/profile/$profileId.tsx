@@ -35,13 +35,13 @@ function RouteComponent() {
 
         <img
           className="absolute left-5 md:-bottom-[60px] -bottom-[50px] md:w-[120px] w-[100px] rounded-full object-cover"
-          src={userData?.profileImage}
+          src={userData?.profileImage || '/blank-profile.webp'}
           alt="Profile"
         />
       </div>
       <div className="pb-[70px]" />
 
-      <div className="pl-5 flex flex-col gap-4">
+      <div className="px-5 flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <div>
             <div className="flex items-center gap-1">
@@ -69,16 +69,16 @@ function RouteComponent() {
         <ChevronsDown size={34} />
       </div>
 
-      {!userData?.posts && (
+      {userData?.posts.length === 0 && (
         <p className="text-center pt-5">You currently have no posts.</p>
       )}
-      <div className="pl-5 pt-5">
+      <div className="px-5 pt-5">
         {userData?.posts.map((post) => (
           <PostComponent
             key={post.id}
             content={post.content}
             authorName={userData.userName}
-            authorImage={userData.profileImage}
+            authorImage={userData.profileImage || '/blank-profile.webp'}
             postImage={post.image}
             likesAmmount={post._count.likes}
             commentsAmmount={post._count.comments}
