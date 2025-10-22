@@ -1,10 +1,10 @@
 import { getUser } from '@/api-routes/user'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
-import defaultBanner from '../../../public/default-banner.svg'
-import { BadgeCheck } from 'lucide-react'
+import { BadgeCheck, ChevronsDown } from 'lucide-react'
 import { ButtonComponent } from '@/components/Button'
 import { formatDate } from '@/utils/formatDate'
+import { PostComponent } from '@/components/PostComponent'
 
 export const Route = createFileRoute('/profile/$profileId')({
   component: RouteComponent,
@@ -33,7 +33,7 @@ function RouteComponent() {
       <div className="relative">
         <img
           className="max-h-[200px] w-full object-cover"
-          src={data?.profileBanner || defaultBanner}
+          src={data?.profileBanner || '/default-banner.svg'}
           alt="Profile banner"
         />
 
@@ -66,6 +66,27 @@ function RouteComponent() {
           />
         </div>
         <p>{data?.bio}</p>
+      </div>
+
+      <div className="flex flex-col items-center gap-2">
+        <p className="pt-5 text-3xl">Your posts</p>
+        <ChevronsDown size={34} />
+      </div>
+
+      <div className="pl-5 pt-5">
+        {data?.posts.map((post) => (
+          <PostComponent
+            key={post.id}
+            content={post.content}
+            authorName={data.userName}
+            authorImage={data.profileImage}
+            postImage={post.image}
+            likesAmmount={post._count.likes}
+            commentsAmmount={post._count.comments}
+            created_at={formatDate(post.createdAt)}
+            isAdmin={data.role === 'ADMIN'}
+          />
+        ))}
       </div>
     </section>
   )

@@ -43,6 +43,12 @@ export const getUserById = async (req: Request, res: Response) => {
         posts: {
           orderBy: [{ createdAt: "desc" }],
           include: {
+            _count: {
+              select: {
+                likes: true,
+                comments: true,
+              },
+            },
             likes: {
               include: {
                 user: true,

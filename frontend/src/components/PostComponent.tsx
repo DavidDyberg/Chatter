@@ -1,5 +1,6 @@
 import { BadgeCheck, Heart, MessageCircle } from 'lucide-react'
 import { cn } from '@/utils/classnames'
+import { formatDate } from '@/utils/formatDate'
 
 type PostComponentProps = {
   content: string
@@ -39,7 +40,7 @@ export const PostComponent: React.FC<PostComponentProps> = ({
             <p>{authorName}</p>
             {isAdmin && <BadgeCheck color="#6B5FF3" size={20} />}
           </div>
-          <p className="text-sm text-purple-light">{created_at}</p>
+          <p className="text-sm text-purple-light">{formatDate(created_at)}</p>
         </div>
 
         <div className="flex flex-col pt-2 gap-2">
