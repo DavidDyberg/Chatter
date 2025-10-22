@@ -31,8 +31,14 @@ export const getUsers = async (req: Request, res: Response) => {
 export const getUserById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+    const isMongoId = /^[0-9a-fA-F]{24}$/.test(id);
+
     const user = await prisma.user.findUnique({
-      where: { id: id },
+      where: isMongoId ? { id } : { auth0ID: id },
       include: {
         posts: {
           orderBy: [{ createdAt: "desc" }],

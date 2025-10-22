@@ -10,6 +10,8 @@ export type User = {
   role?: 'USER' | 'ADMIN'
   createdAt?: string
   updatedAt?: string
+  posts: Post[]
+  comments: Comment[]
 }
 
 export type Post = {
