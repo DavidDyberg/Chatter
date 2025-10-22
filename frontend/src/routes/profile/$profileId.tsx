@@ -1,4 +1,3 @@
-// routes/profile/$profileId.tsx
 import { getUser } from '@/api-routes/user'
 import { useQuery } from '@tanstack/react-query'
 
