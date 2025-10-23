@@ -6,6 +6,7 @@ import { ButtonComponent } from '@/components/Button'
 import { formatDate } from '@/utils/formatDate'
 import { PostComponent } from '@/components/PostComponent'
 import { ProfileSkeleton } from '@/components/skeleton/ProfileSkeleton'
+import { PostSkeleton } from '@/components/skeleton/PostSkeleton'
 
 export const Route = createFileRoute('/profile/$profileId')({
   component: RouteComponent,
@@ -80,21 +81,25 @@ function RouteComponent() {
         <p className="text-center pt-5">You currently have no posts.</p>
       )}
 
-      <div className="px-5 pt-5">
-        {userData?.posts.map((post) => (
-          <PostComponent
-            key={post.id}
-            content={post.content}
-            authorName={userData.userName}
-            authorImage={userData.profileImage || '/blank-profile.webp'}
-            postImage={post.image}
-            likesAmmount={post._count.likes}
-            commentsAmmount={post._count.comments}
-            created_at={formatDate(post.createdAt)}
-            isAdmin={userData.role === 'ADMIN'}
-          />
-        ))}
-      </div>
+      {isPending ? (
+        <PostSkeleton className="px-5" />
+      ) : (
+        <div className="px-5 pt-5">
+          {userData?.posts.map((post) => (
+            <PostComponent
+              key={post.id}
+              content={post.content}
+              authorName={userData.userName}
+              authorImage={userData.profileImage || '/blank-profile.webp'}
+              postImage={post.image}
+              likesAmmount={post._count.likes}
+              commentsAmmount={post._count.comments}
+              created_at={formatDate(post.createdAt)}
+              isAdmin={userData.role === 'ADMIN'}
+            />
+          ))}
+        </div>
+      )}
     </section>
   )
 }

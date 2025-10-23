@@ -1,6 +1,12 @@
-export const PostSkeleton = () => {
+import { cn } from '@/utils/classnames'
+
+type PostSkeletonProps = {
+  className?: string
+}
+
+export const PostSkeleton: React.FC<PostSkeletonProps> = ({ className }) => {
   return (
-    <div className="flex flex-col gap-4 pt-4">
+    <div className={cn('flex flex-col gap-4 pt-4', className)}>
       {Array.from({ length: 3 }).map((_, i) => (
         <section key={i} className="flex gap-2">
           <div className="w-12 h-12 rounded-full bg-gray-200 animate-pulse"></div>
@@ -20,7 +26,7 @@ export const PostSkeleton = () => {
               <div className="h-4 bg-gray-200 rounded w-5/6 animate-pulse"></div>
 
               {Math.random() > 0.5 && (
-                <div className="h-84 bg-gray-200 rounded-xl animate-pulse"></div>
+                <div className="h-84 lg:w-lg bg-gray-200 rounded-xl animate-pulse"></div>
               )}
 
               <div className="flex gap-3 pt-2">
