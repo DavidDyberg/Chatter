@@ -18,7 +18,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         <aside className="hidden md:block md:border-r md:border-gray-800">
           <Sidebar />
         </aside>
-        <main>
+        <main className='pb-20 md:pb-0"'>
           <Outlet />
         </main>
         <BottomTabBar />
