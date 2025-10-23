@@ -73,7 +73,7 @@ function RouteComponent() {
       )}
 
       <div className="flex flex-col items-center gap-2">
-        <p className="pt-5 text-3xl">Your posts</p>
+        <p className="pt-5 text-xl">Your posts</p>
         <ChevronsDown size={34} />
       </div>
 
