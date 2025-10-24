@@ -9,6 +9,7 @@ import { ProfileSkeleton } from '@/components/skeleton/ProfileSkeleton'
 import { PostSkeleton } from '@/components/skeleton/PostSkeleton'
 import { useState } from 'react'
 import { EditProfile } from '@/components/EditProfile'
+import { useAuth0 } from '@auth0/auth0-react'
 
 export const Route = createFileRoute('/profile/$profileId')({
   component: RouteComponent,
@@ -23,11 +24,19 @@ export const Route = createFileRoute('/profile/$profileId')({
 function RouteComponent() {
   const [isEditMode, setIsEditMode] = useState(false)
   const params = useParams({ from: '/profile/$profileId' })
+  const { user: userMe } = useAuth0()
 
   const { data: userData, isPending } = useQuery({
     queryKey: ['user', params.profileId],
     queryFn: () => getUser(params.profileId),
   })
+
+  const isOwner = Boolean(
+    userMe?.sub &&
+      (userMe.sub === params.profileId ||
+        userData?.id === params.profileId ||
+        userData?.auth0ID === userMe.sub),
+  )
 
   return (
     <section className="relative">
@@ -39,8 +48,8 @@ function RouteComponent() {
             <EditProfile
               userName={userData?.userName || ''}
               bio={userData?.bio || ''}
-              profileImage={userData?.profileImage || '/default-banner.svg'}
-              profileBanner={userData?.profileBanner || '/blank-profile.webp'}
+              profileBanner={userData?.profileBanner || '/default-banner.svg'}
+              profileImage={userData?.profileImage || '/blank-profile.webp'}
               onClose={() => setIsEditMode(false)}
             />
           ) : (
@@ -74,12 +83,14 @@ function RouteComponent() {
                     </p>
                   </div>
 
-                  <ButtonComponent
-                    className="p-2 pl-4 pr-4"
-                    label="Edit profile"
-                    variant="Seacondary"
-                    OnClick={() => setIsEditMode(true)}
-                  />
+                  {isOwner && (
+                    <ButtonComponent
+                      className="p-2 pl-4 pr-4"
+                      label="Edit profile"
+                      variant="Seacondary"
+                      OnClick={() => setIsEditMode(true)}
+                    />
+                  )}
                 </div>
                 <p>{userData?.bio}</p>
               </div>
@@ -89,12 +100,19 @@ function RouteComponent() {
       )}
 
       <div className="flex flex-col items-center gap-2">
-        <p className="pt-5 text-xl">Your posts</p>
+        <p className="pt-5 text-xl">
+          {isOwner ? 'Your posts' : `${userData?.userName}'s posts`}
+        </p>
+
         <ChevronsDown size={34} />
       </div>
 
       {userData?.posts.length === 0 && (
-        <p className="text-center pt-5">You currently have no posts.</p>
+        <p className="text-center pt-5">
+          {isOwner
+            ? 'You currently have no posts.'
+            : `${userData.userName} currently has no posts.`}
+        </p>
       )}
 
       {isPending ? (
