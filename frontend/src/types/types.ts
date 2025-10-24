@@ -1,5 +1,6 @@
 export type User = {
   id: string
+  auth0ID?: string
   userName: string
   email: string
   bio: string
