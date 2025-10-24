@@ -51,6 +51,7 @@ function RouteComponent() {
               profileBanner={userData?.profileBanner || '/default-banner.svg'}
               profileImage={userData?.profileImage || '/blank-profile.webp'}
               onClose={() => setIsEditMode(false)}
+              onSave={() => setIsEditMode(false)}
             />
           ) : (
             <>
