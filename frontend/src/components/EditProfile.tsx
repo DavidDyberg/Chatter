@@ -45,7 +45,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
         <ButtonComponent
           className="p-2 pl-4 pr-4 absolute right-5 top-5 md:hidden"
           label="Cancel"
-          variant="Seacondary"
+          variant="Delete"
           OnClick={onClose}
         />
       </div>
@@ -66,7 +66,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
         <ButtonComponent
           className="p-2 pl-4 pr-4 hidden md:block"
           label="Cancel"
-          variant="Seacondary"
+          variant="Delete"
           OnClick={onClose}
         />
       </div>
