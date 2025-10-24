@@ -7,6 +7,8 @@ import { formatDate } from '@/utils/formatDate'
 import { PostComponent } from '@/components/PostComponent'
 import { ProfileSkeleton } from '@/components/skeleton/ProfileSkeleton'
 import { PostSkeleton } from '@/components/skeleton/PostSkeleton'
+import { useState } from 'react'
+import { EditProfile } from '@/components/EditProfile'
 
 export const Route = createFileRoute('/profile/$profileId')({
   component: RouteComponent,
@@ -19,6 +21,7 @@ export const Route = createFileRoute('/profile/$profileId')({
 })
 
 function RouteComponent() {
+  const [isEditMode, setIsEditMode] = useState(false)
   const params = useParams({ from: '/profile/$profileId' })
 
   const { data: userData, isPending } = useQuery({
@@ -32,43 +35,56 @@ function RouteComponent() {
         <ProfileSkeleton />
       ) : (
         <>
-          <div className="relative">
-            <img
-              className="max-h-[200px] w-full object-cover"
-              src={userData?.profileBanner || '/default-banner.svg'}
-              alt="Profile banner"
+          {isEditMode ? (
+            <EditProfile
+              userName={userData?.userName || ''}
+              bio={userData?.bio || ''}
+              profileImage={userData?.profileImage || '/default-banner.svg'}
+              profileBanner={userData?.profileBanner || '/blank-profile.webp'}
+              onClose={() => setIsEditMode(false)}
             />
+          ) : (
+            <>
+              <div className="relative">
+                <img
+                  className="max-h-[200px] w-full object-cover"
+                  src={userData?.profileBanner || '/default-banner.svg'}
+                  alt="Profile banner"
+                />
 
-            <img
-              className="absolute left-5 md:-bottom-[60px] -bottom-[50px] md:w-[120px] w-[100px] rounded-full object-cover"
-              src={userData?.profileImage || '/blank-profile.webp'}
-              alt="Profile"
-            />
-          </div>
-          <div className="pb-[70px]" />
-
-          <div className="px-5 flex flex-col gap-4">
-            <div className="flex justify-between items-center">
-              <div>
-                <div className="flex items-center gap-1">
-                  <p className="font-bold text-xl">{userData?.userName}</p>
-                  {userData?.role === 'ADMIN' && (
-                    <BadgeCheck className="ml-1" color="#6B5FF3" />
-                  )}
-                </div>
-                <p className="text-purple-light text-sm">
-                  Joined {formatDate(userData?.createdAt)}
-                </p>
+                <img
+                  className="absolute left-5 md:-bottom-[60px] -bottom-[50px] md:w-[120px] w-[100px] rounded-full object-cover"
+                  src={userData?.profileImage || '/blank-profile.webp'}
+                  alt="Profile"
+                />
               </div>
+              <div className="pb-[70px]" />
 
-              <ButtonComponent
-                className="p-2 pl-4 pr-4"
-                label="Edit profile"
-                variant="Seacondary"
-              />
-            </div>
-            <p>{userData?.bio}</p>
-          </div>
+              <div className="px-5 flex flex-col gap-4">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <div className="flex items-center gap-1">
+                      <p className="font-bold text-xl">{userData?.userName}</p>
+                      {userData?.role === 'ADMIN' && (
+                        <BadgeCheck className="ml-1" color="#6B5FF3" />
+                      )}
+                    </div>
+                    <p className="text-purple-light text-sm">
+                      Joined {formatDate(userData?.createdAt)}
+                    </p>
+                  </div>
+
+                  <ButtonComponent
+                    className="p-2 pl-4 pr-4"
+                    label="Edit profile"
+                    variant="Seacondary"
+                    OnClick={() => setIsEditMode(true)}
+                  />
+                </div>
+                <p>{userData?.bio}</p>
+              </div>
+            </>
+          )}
         </>
       )}
 
