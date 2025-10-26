@@ -1,6 +1,11 @@
+import { useState } from 'react'
 import { ButtonComponent } from './Button'
+import { useMutation } from '@tanstack/react-query'
+import { editUser } from '@/api-routes/user'
+import type { User } from '@/types/types'
 
 type EditProfileProps = {
+  id: string
   userName: string
   bio: string
   profileImage: string
@@ -10,6 +15,7 @@ type EditProfileProps = {
 }
 
 export const EditProfile: React.FC<EditProfileProps> = ({
+  id,
   userName,
   bio,
   profileImage,
@@ -17,8 +23,30 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   onClose,
   onSave,
 }) => {
+  const [name, setName] = useState(userName)
+  const [biography, setBiography] = useState(bio)
+  const [imageProfile, setImageProfile] = useState(profileImage)
+  const [imageBanner, setImageBanner] = useState(profileBanner)
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (updatedData: Partial<User>) => {
+      return editUser(id, updatedData)
+    },
+    onSuccess: () => {
+      onSave()
+    },
+    onError: (error) => {
+      console.error('Mutation Error:', error)
+    },
+  })
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    mutate({ userName: name, bio: biography })
+  }
+
   return (
-    <form className="relative">
+    <form onSubmit={handleSubmit} className="relative">
       <div className="relative group/banner cursor-pointer">
         <img
           className="max-h-[200px] w-full object-cover transition-opacity"
@@ -59,7 +87,8 @@ export const EditProfile: React.FC<EditProfileProps> = ({
           </label>
           <input
             className="font-bold text-xl border border-gray-600 rounded-lg p-2 focus:border-purple-light focus:outline-none"
-            value={userName}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             id="userName"
           />
         </div>
@@ -78,16 +107,18 @@ export const EditProfile: React.FC<EditProfileProps> = ({
         <textarea
           className="bg-transparent border border-gray-600 rounded-lg p-4 focus:border-purple-light focus:outline-none"
           id="bio"
-          value={bio}
+          value={biography}
+          onChange={(e) => setBiography(e.target.value)}
         />
       </div>
 
       <div className="flex justify-center pt-5 w-full">
         <ButtonComponent
           className="w-2/4"
-          OnClick={onSave}
-          label="Save"
+          label={isPending ? 'Saving...' : 'Save'}
           variant="Primary"
+          disabled={isPending}
+          isLoading={isPending}
         />
       </div>
     </form>
