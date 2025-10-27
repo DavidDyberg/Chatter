@@ -25,8 +25,8 @@ export const EditProfile: React.FC<EditProfileProps> = ({
 }) => {
   const [name, setName] = useState(userName)
   const [biography, setBiography] = useState(bio)
-  const [imageProfile, setImageProfile] = useState(profileImage)
-  const [imageBanner, setImageBanner] = useState(profileBanner)
+  // const [imageProfile, setImageProfile] = useState(profileImage)
+  // const [imageBanner, setImageBanner] = useState(profileBanner)
 
   const { mutate, isPending } = useMutation({
     mutationFn: (updatedData: Partial<User>) => {
