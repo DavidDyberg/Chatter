@@ -1,25 +1,25 @@
 import { cn } from '@/utils/classnames'
 import { Loader2 } from 'lucide-react'
 
-type ButtonProps = {
+type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   label: string
   variant: 'Primary' | 'Seacondary' | 'Delete'
   className?: string
-  OnClick?: () => void
   isLoading?: boolean
-  disabled?: boolean
 }
 
 export const ButtonComponent: React.FC<ButtonProps> = ({
   label,
   variant,
-  OnClick,
   isLoading = false,
   disabled = false,
   className,
-}) => {
+  type = 'button',
+  ...props
+}: ButtonProps) => {
   return (
     <button
+      type={type}
       disabled={disabled || isLoading}
       className={cn(
         `p-3 pl-6 pr-6 rounded-3xl font-bold cursor-pointer hover:opacity-90
@@ -27,7 +27,7 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
         ${variant === 'Primary' ? 'bg-purple-dark' : variant === 'Seacondary' ? 'bg-white text-primary-black' : 'border border-red-600 text-red-600 hover:opacity-80'}`,
         className,
       )}
-      onClick={OnClick}
+      {...props}
     >
       <div className="flex justify-center gap-2 items-center">
         <p>{label}</p>
