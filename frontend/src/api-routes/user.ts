@@ -11,7 +11,7 @@ export const getUser = async (id: string) => {
 
 export const editUser = async (id: string, updatedData: Partial<User>) => {
   const { data } = await axios.put<User>(
-    `http://localhost:8080/api/user/${id}`,
+    `https://chatter-r8i2.onrender.com/api/user/${id}`,
     updatedData,
     {
       headers: {
