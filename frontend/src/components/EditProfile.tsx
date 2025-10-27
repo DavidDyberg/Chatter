@@ -118,20 +118,24 @@ export const EditProfile: React.FC<EditProfileProps> = ({
       </div>
 
       <div className="pt-4 px-5 flex flex-col gap-2">
-        <label className="text-purple-light" htmlFor="bio">
-          Biography:
-        </label>
+        <div className="flex justify-between items-center">
+          <label className="text-purple-light" htmlFor="bio">
+            Biography:
+          </label>
+          <p>{biography.length} / 800</p>
+        </div>
         <textarea
-          className="bg-transparent border border-gray-600 rounded-lg p-4 focus:border-purple-light focus:outline-none"
-          id="bio"
           value={biography}
           onChange={(e) => setBiography(e.target.value)}
+          maxLength={800}
+          className="bg-transparent border border-gray-600 rounded-lg p-4 focus:border-purple-light focus:outline-none field-sizing-content min-h-48"
+          id="bio"
         />
       </div>
 
-      <div className="flex justify-center pt-5 w-full">
+      <div className="flex justify-center pt-5 w-full px-5">
         <ButtonComponent
-          className="w-2/4"
+          className="md:w-2/4 w-full"
           label={isPending ? 'Saving...' : 'Save'}
           variant="Primary"
           disabled={isPending}
