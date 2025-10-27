@@ -10,6 +10,7 @@ import { routeTree } from './routeTree.gen'
 
 import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
+import { Toaster } from 'react-hot-toast'
 
 // Create a new router instance
 
@@ -40,6 +41,14 @@ if (rootElement && !rootElement.innerHTML) {
       <Auth0Wrapper>
         <TanStackQueryProvider.Provider>
           <RouterProvider router={router} />
+          <Toaster
+            toastOptions={{
+              style: {
+                color: 'white',
+                backgroundColor: '#170e23',
+              },
+            }}
+          />
         </TanStackQueryProvider.Provider>
       </Auth0Wrapper>
     </StrictMode>,

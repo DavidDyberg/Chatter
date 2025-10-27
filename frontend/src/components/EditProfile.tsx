@@ -3,6 +3,7 @@ import { ButtonComponent } from './Button'
 import { useMutation } from '@tanstack/react-query'
 import { editUser } from '@/api-routes/user'
 import type { User } from '@/types/types'
+import { toast } from 'react-hot-toast'
 
 type EditProfileProps = {
   id: string
@@ -34,9 +35,10 @@ export const EditProfile: React.FC<EditProfileProps> = ({
     },
     onSuccess: () => {
       onSave()
+      toast.success('Profile updated successfully')
     },
-    onError: (error) => {
-      console.error('Mutation Error:', error)
+    onError: () => {
+      toast.error('Something went wrong, please try again later')
     },
   })
 
