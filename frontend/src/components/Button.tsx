@@ -24,7 +24,7 @@ export const ButtonComponent: React.FC<ButtonProps> = ({
       className={cn(
         `p-3 pl-6 pr-6 rounded-3xl font-bold cursor-pointer hover:opacity-90
         ${disabled ? 'opacity-60 cursor-default hover:opacity-60' : ''}
-        ${variant === 'Primary' ? 'bg-purple-dark' : variant === 'Seacondary' ? 'bg-white text-primary-black' : 'border border-red-600 text-red-600 hover:opacity-80'}`,
+        ${variant === 'Primary' ? 'bg-purple-dark' : variant === 'Seacondary' ? 'bg-white text-primary-black' : 'border border-primary-red text-primary-red hover:opacity-80'}`,
         className,
       )}
       {...props}

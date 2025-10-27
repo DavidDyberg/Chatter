@@ -28,6 +28,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const [biography, setBiography] = useState(bio)
   // const [imageProfile, setImageProfile] = useState(profileImage)
   // const [imageBanner, setImageBanner] = useState(profileBanner)
+  const [usernameError, setUsernameError] = useState('')
 
   const { mutate, isPending } = useMutation({
     mutationFn: (updatedData: Partial<User>) => {
@@ -44,6 +45,12 @@ export const EditProfile: React.FC<EditProfileProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!name.trim()) {
+      setUsernameError('UserName is required')
+      return
+    }
+    setUsernameError('')
     mutate({ userName: name, bio: biography })
   }
 
@@ -88,11 +95,19 @@ export const EditProfile: React.FC<EditProfileProps> = ({
             Username:
           </label>
           <input
-            className="font-bold text-xl border border-gray-600 rounded-lg p-2 focus:border-purple-light focus:outline-none"
+            className={`font-bold text-xl rounded-lg p-2 border focus:outline-none ${usernameError ? 'border-primary-red focus:border-primary-red' : 'border-gray-600 focus:border-purple-light'}`}
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value)
+              if (usernameError) {
+                setUsernameError('')
+              }
+            }}
             id="userName"
           />
+          {usernameError && (
+            <p className="text-red-600">Username is required</p>
+          )}
         </div>
         <ButtonComponent
           className="p-2 pl-4 pr-4 hidden md:block"
