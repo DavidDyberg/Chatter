@@ -26,7 +26,11 @@ function RouteComponent() {
   const params = useParams({ from: '/profile/$profileId' })
   const { user: userMe } = useAuth0()
 
-  const { data: userData, isPending } = useQuery({
+  const {
+    data: userData,
+    isPending,
+    refetch,
+  } = useQuery({
     queryKey: ['user', params.profileId],
     queryFn: () => getUser(params.profileId),
   })
@@ -46,12 +50,16 @@ function RouteComponent() {
         <>
           {isEditMode ? (
             <EditProfile
+              id={params.profileId}
               userName={userData?.userName || ''}
               bio={userData?.bio || ''}
               profileBanner={userData?.profileBanner || '/default-banner.svg'}
               profileImage={userData?.profileImage || '/blank-profile.webp'}
               onClose={() => setIsEditMode(false)}
-              onSave={() => setIsEditMode(false)}
+              onSave={() => {
+                refetch()
+                setIsEditMode(false)
+              }}
             />
           ) : (
             <>

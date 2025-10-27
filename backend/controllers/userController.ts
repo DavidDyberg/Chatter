@@ -134,9 +134,17 @@ export const updateUser = async (req: Request, res: Response) => {
     const { id } = req.params;
     const { userName, email, bio } = req.body;
 
+    if (!id) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-    const existingUser = await prisma.user.findUnique({ where: { id } });
+    const isMongoId = /^[0-9a-fA-F]{24}$/.test(id);
+    const existingUser = await prisma.user.findUnique({
+      where: isMongoId ? { id } : { auth0ID: id },
+    });
+
     if (!existingUser) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -159,7 +167,7 @@ export const updateUser = async (req: Request, res: Response) => {
       files?.profileBanner?.[0]?.filename || existingUser.profileBannerId;
 
     const updatedUser = await prisma.user.update({
-      where: { id },
+      where: isMongoId ? { id } : { auth0ID: id },
       data: {
         userName,
         email,

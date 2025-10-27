@@ -8,3 +8,17 @@ export const getUser = async (id: string) => {
 
   return data
 }
+
+export const editUser = async (id: string, updatedData: Partial<User>) => {
+  const { data } = await axios.put<User>(
+    `https://chatter-r8i2.onrender.com/api/user/${id}`,
+    updatedData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    },
+  )
+
+  return data
+}
