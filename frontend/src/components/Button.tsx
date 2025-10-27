@@ -6,7 +6,6 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant: 'Primary' | 'Seacondary' | 'Delete'
   className?: string
   isLoading?: boolean
-  onClick?: () => void
 }
 
 export const ButtonComponent: React.FC<ButtonProps> = ({
