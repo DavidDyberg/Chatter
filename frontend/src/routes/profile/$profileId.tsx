@@ -91,13 +91,12 @@ function RouteComponent() {
                       Joined {formatDate(userData?.createdAt)}
                     </p>
                   </div>
-
                   {isOwner && (
                     <ButtonComponent
                       className="p-2 pl-4 pr-4"
                       label="Edit profile"
                       variant="Seacondary"
-                      OnClick={() => setIsEditMode(true)}
+                      onClick={() => setIsEditMode(true)}
                     />
                   )}
                 </div>

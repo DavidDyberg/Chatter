@@ -74,7 +74,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
           className="p-2 pl-4 pr-4 absolute right-5 top-5 md:hidden"
           label="Cancel"
           variant="Delete"
-          OnClick={onClose}
+          onClick={onClose}
         />
       </div>
 
@@ -96,7 +96,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
           className="p-2 pl-4 pr-4 hidden md:block"
           label="Cancel"
           variant="Delete"
-          OnClick={onClose}
+          onClick={onClose}
         />
       </div>
 
@@ -119,6 +119,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
           variant="Primary"
           disabled={isPending}
           isLoading={isPending}
+          type="submit"
         />
       </div>
     </form>
