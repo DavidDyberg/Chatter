@@ -65,13 +65,13 @@ function RouteComponent() {
             <>
               <div className="relative">
                 <img
-                  className="max-h-[200px] w-full object-cover"
+                  className="md:h-[200px] h-[140px] w-full object-cover"
                   src={userData?.profileBanner || '/default-banner.svg'}
                   alt="Profile banner"
                 />
 
                 <img
-                  className="absolute left-5 md:-bottom-[60px] -bottom-[50px] md:w-[120px] w-[100px] rounded-full object-cover"
+                  className="absolute left-5 md:-bottom-[60px] -bottom-[50px] md:w-[120px] md:h-[120px] w-[100px] h-[100px] rounded-full object-cover"
                   src={userData?.profileImage || '/blank-profile.webp'}
                   alt="Profile"
                 />
