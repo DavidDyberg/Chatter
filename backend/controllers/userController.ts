@@ -2,7 +2,6 @@ import type { Request, Response } from "express";
 import { PrismaClient } from "../generated/prisma";
 import cloudinary from "../utils/cloudinary";
 import type { CloudinaryFile } from "../types/types";
-import { Buffer } from "buffer";
 
 const prisma = new PrismaClient();
 
