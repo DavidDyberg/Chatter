@@ -66,7 +66,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
             onClick={openFileDialog}
           >
             <img
-              className="max-h-[200px] w-full object-cover transition-opacity"
+              className="md:h-[200px] h-[140px] w-full object-cover transition-opacity"
               src={preview || profileBanner}
               alt="Profile banner"
             />
