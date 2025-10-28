@@ -23,18 +23,26 @@ export default function FileUploader({
     const file = e.target.files?.[0]
     if (!file) return
 
-    if (file.type === 'image/svg+xml') {
+    if (
+      file.type === 'image/svg+xml' ||
+      file.name.toLowerCase().endsWith('.svg')
+    ) {
       toast.error('SVG files are not allowed.')
       e.target.value = ''
       return
     }
-    const isHeic = file.type === 'image/heic' || file.type === 'image/heif'
+
+    const fileName = file.name.toLowerCase()
+    const isHeicByExt = fileName.endsWith('.heic') || fileName.endsWith('.heif')
+    const isHeicByType =
+      file.type === 'image/heic' || file.type === 'image/heif'
+    const isHeic = isHeicByExt || isHeicByType
 
     let finalFile: File = file
 
     if (isHeic) {
       try {
-        toast('Converting photo...')
+        toast('Converting iPhone photo...')
 
         const convertedBlob: any = await heic2any({
           blob: file,
@@ -42,8 +50,12 @@ export default function FileUploader({
           quality: 0.8,
         })
 
+        const blob = Array.isArray(convertedBlob)
+          ? convertedBlob[0]
+          : convertedBlob
+
         finalFile = new File(
-          [convertedBlob],
+          [blob],
           file.name.replace(/\.(heic|heif)$/i, '.jpg'),
           {
             type: 'image/jpeg',
@@ -51,15 +63,21 @@ export default function FileUploader({
         )
 
         toast.dismiss()
-        toast.success('Photo converted!')
+        toast.success('Photo converted to JPEG!')
       } catch (err) {
-        toast.error('Failed to convert photo. Please use JPEG/PNG.')
+        console.error('HEIC conversion failed:', err)
+        toast.error(
+          'Failed to convert photo. Try saving as JPEG in Photos app.',
+        )
         e.target.value = ''
         return
       }
     }
 
-    if (!finalFile.type.startsWith('image/')) {
+    if (
+      !finalFile.type.startsWith('image/') &&
+      !finalFile.name.match(/\.(jpe?g|png|webp|gif)$/i)
+    ) {
       toast.error('Only image files are allowed.')
       e.target.value = ''
       return
