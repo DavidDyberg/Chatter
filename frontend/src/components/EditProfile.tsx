@@ -1,16 +1,16 @@
 import { useState } from 'react'
-import { ButtonComponent } from './Button'
+import { ButtonComponent } from '@/components/Button'
 import { useMutation } from '@tanstack/react-query'
 import { editUser } from '@/api-routes/user'
-import type { User } from '@/types/types'
 import { toast } from 'react-hot-toast'
+import FileUploader from '@/components/FileUploader'
 
 type EditProfileProps = {
   id: string
   userName: string
   bio: string
   profileImage: string
-  profileBanner?: string
+  profileBanner: string
   onClose: () => void
   onSave: () => void
 }
@@ -26,62 +26,90 @@ export const EditProfile: React.FC<EditProfileProps> = ({
 }) => {
   const [name, setName] = useState(userName)
   const [biography, setBiography] = useState(bio)
-  // const [imageProfile, setImageProfile] = useState(profileImage)
-  // const [imageBanner, setImageBanner] = useState(profileBanner)
+  const [newProfileImage, setNewProfileImage] = useState<File | null>(null)
+  const [newBannerImage, setNewBannerImage] = useState<File | null>(null)
 
   const { mutate, isPending } = useMutation({
-    mutationFn: (updatedData: Partial<User>) => {
-      return editUser(id, updatedData)
-    },
+    mutationFn: (updatedData: FormData) => editUser(id, updatedData),
     onSuccess: () => {
       onSave()
       toast.success('Profile updated successfully')
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error('Edit user failed:', error)
       toast.error('Something went wrong, please try again later')
     },
   })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    mutate({ userName: name, bio: biography })
+
+    const formData = new FormData()
+    formData.append('userName', name)
+    formData.append('bio', biography)
+
+    if (newProfileImage) formData.append('profileImage', newProfileImage)
+    if (newBannerImage) formData.append('profileBanner', newBannerImage)
+
+    mutate(formData)
   }
 
   return (
     <form onSubmit={handleSubmit} className="relative">
-      <div className="relative group/banner cursor-pointer">
-        <img
-          className="max-h-[200px] w-full object-cover transition-opacity"
-          src={profileBanner}
-          alt="Profile banner"
-        />
-        <div className="absolute inset-0 bg-black/60 md:opacity-0 md:group-hover/banner:opacity-100 flex items-center justify-center transition-opacity duration-300">
-          <p className=" font-semibold">Change banner</p>
-        </div>
-      </div>
+      <FileUploader
+        defaultImage={profileBanner}
+        onFileSelect={setNewBannerImage}
+      >
+        {({ preview, openFileDialog }) => (
+          <div
+            className="relative group/banner cursor-pointer"
+            onClick={openFileDialog}
+          >
+            <img
+              className="max-h-[200px] w-full object-cover transition-opacity"
+              src={preview || profileBanner}
+              alt="Profile banner"
+            />
+            <div className="absolute inset-0 bg-black/60 md:opacity-0 md:group-hover/banner:opacity-100 flex items-center justify-center transition-opacity duration-300">
+              <p className="font-semibold text-white">Change banner</p>
+            </div>
+          </div>
+        )}
+      </FileUploader>
 
-      <div className="relative group/profile">
-        <img
-          className="absolute left-5 md:-bottom-[60px] -bottom-[50px] md:w-[120px] w-[100px] rounded-full object-cover cursor-pointer transition-opacity"
-          src={profileImage}
-          alt="Profile picture"
-        />
+      <FileUploader
+        defaultImage={profileImage}
+        onFileSelect={setNewProfileImage}
+      >
+        {({ preview, openFileDialog }) => (
+          <div className="relative group/profile">
+            <img
+              className="absolute left-5 md:-bottom-[60px] -bottom-[50px] md:w-[120px] w-[100px] rounded-full object-cover cursor-pointer transition-opacity"
+              src={preview || profileImage}
+              alt="Profile picture"
+              onClick={openFileDialog}
+            />
 
-        <div className="absolute md:h-6 h-10 md:left-1 left-5 md:-bottom-[60px] -bottom-[66px] md:w-[160px] w-[100px] rounded-full bg-black/60 md:opacity-0 md:group-hover/profile:opacity-100 flex items-center justify-center transition-opacity duration-300">
-          <p className="text-xs tracking-wide text-center px-2">
-            Change profile image
-          </p>
-        </div>
-        <ButtonComponent
-          className="p-2 pl-4 pr-4 absolute right-5 top-5 md:hidden"
-          label="Cancel"
-          variant="Delete"
-          onClick={onClose}
-        />
-      </div>
+            <div
+              className="absolute md:h-6 h-10 md:left-1 left-5 md:-bottom-[60px] -bottom-[66px] md:w-[160px] w-[100px] rounded-full bg-black/60 md:opacity-0 md:group-hover/profile:opacity-100 flex items-center justify-center transition-opacity duration-300"
+              onClick={openFileDialog}
+            >
+              <p className="text-xs tracking-wide text-center px-2 text-white">
+                Change profile image
+              </p>
+            </div>
+
+            <ButtonComponent
+              className="p-2 pl-4 pr-4 absolute right-5 top-5 md:hidden"
+              label="Cancel"
+              variant="Delete"
+              onClick={onClose}
+            />
+          </div>
+        )}
+      </FileUploader>
 
       <div className="pb-[70px]" />
-
       <div className="flex justify-between px-5 items-end">
         <div className="flex flex-col gap-1">
           <label className="text-purple-light" htmlFor="userName">

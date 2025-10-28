@@ -138,7 +138,11 @@ export const updateUser = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "User ID is required" });
     }
 
-    const files = req.files as { [fieldname: string]: Express.Multer.File[] };
+    const files = req.files as
+      | {
+          [fieldname: string]: Express.Multer.File[];
+        }
+      | undefined;
 
     const isMongoId = /^[0-9a-fA-F]{24}$/.test(id);
     const existingUser = await prisma.user.findUnique({
@@ -149,23 +153,54 @@ export const updateUser = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (files?.profileImage && existingUser.profileImageId) {
-      await cloudinary.uploader.destroy(existingUser.profileImageId);
+    let profileImageUrl = existingUser.profileImage;
+    let profileImageId = existingUser.profileImageId;
+    let profileBannerUrl = existingUser.profileBanner;
+    let profileBannerId = existingUser.profileBannerId;
+
+    if (files?.profileImage?.[0]) {
+      const file = files.profileImage[0];
+
+      if (existingUser.profileImageId) {
+        await cloudinary.uploader.destroy(existingUser.profileImageId);
+      }
+
+      const result = await new Promise<any>((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "profile-images" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        uploadStream.end(file.buffer);
+      });
+
+      profileImageUrl = result.secure_url;
+      profileImageId = result.public_id;
     }
-    if (files?.profileBanner && existingUser.profileBannerId) {
-      await cloudinary.uploader.destroy(existingUser.profileBannerId);
+
+    if (files?.profileBanner?.[0]) {
+      const file = files.profileBanner[0];
+
+      if (existingUser.profileBannerId) {
+        await cloudinary.uploader.destroy(existingUser.profileBannerId);
+      }
+
+      const result = await new Promise<any>((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "banners" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        uploadStream.end(file.buffer);
+      });
+
+      profileBannerUrl = result.secure_url;
+      profileBannerId = result.public_id;
     }
-
-    const profileImageUrl =
-      files?.profileImage?.[0]?.path || existingUser.profileImage;
-    const profileImageId =
-      files?.profileImage?.[0]?.filename || existingUser.profileImageId;
-
-    const bannerImageUrl =
-      files?.profileBanner?.[0]?.path || existingUser.profileBanner;
-    const bannerImageId =
-      files?.profileBanner?.[0]?.filename || existingUser.profileBannerId;
-
     const updatedUser = await prisma.user.update({
       where: isMongoId ? { id } : { auth0ID: id },
       data: {
@@ -173,21 +208,19 @@ export const updateUser = async (req: Request, res: Response) => {
         email,
         bio,
         profileImage: profileImageUrl,
-        profileImageId: profileImageId,
-        profileBanner: bannerImageUrl,
-        profileBannerId: bannerImageId,
+        profileImageId,
+        profileBanner: profileBannerUrl,
+        profileBannerId,
       },
     });
 
-    res
-      .status(200)
-      .json({ message: "User updated successfully", user: updatedUser });
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(400).json({ message: error.message });
-    } else {
-      res.status(400).json({ message: "An unknown error has occurred" });
-    }
+    res.status(200).json({
+      message: "User updated successfully",
+      user: updatedUser,
+    });
+  } catch (error: any) {
+    console.error("Update user error:", error);
+    res.status(500).json({ message: error.message || "Failed to update user" });
   }
 };
 
