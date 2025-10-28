@@ -167,7 +167,8 @@ export const updateUser = async (req: Request, res: Response) => {
 
       const result = await new Promise<any>((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: "profile-images" },
+          { folder: "profile-images", upload_preset: "unsigned_upload" },
+
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
@@ -189,7 +190,7 @@ export const updateUser = async (req: Request, res: Response) => {
 
       const result = await new Promise<any>((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: "banners" },
+          { folder: "banners", upload_preset: "unsigned_upload" },
           (error, result) => {
             if (error) reject(error);
             else resolve(result);
