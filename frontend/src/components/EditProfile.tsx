@@ -84,7 +84,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
         {({ preview, openFileDialog }) => (
           <div className="relative group/profile">
             <img
-              className="absolute left-5 md:-bottom-[60px] -bottom-[50px] md:w-[120px] w-[100px] rounded-full object-cover cursor-pointer transition-opacity"
+              className="absolute left-5 md:-bottom-[60px] -bottom-[50px] md:w-[120px] md:h-[120px] w-[100px] h-[100px] rounded-full object-cover cursor-pointer transition-opacity"
               src={preview || profileImage}
               alt="Profile picture"
               onClick={openFileDialog}
