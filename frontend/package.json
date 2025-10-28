@@ -22,6 +22,7 @@
     "@tanstack/react-router-devtools": "^1.131.5",
     "@tanstack/router-plugin": "^1.121.2",
     "axios": "^1.12.2",
+    "browser-image-compression": "^2.0.2",
     "clsx": "^2.1.1",
     "heic2any": "^0.0.4",
     "lucide-react": "^0.544.0",

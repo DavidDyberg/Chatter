@@ -1,6 +1,7 @@
 import { useRef, useState, type ChangeEvent } from 'react'
 import { toast } from 'react-hot-toast'
 import heic2any from 'heic2any'
+import imageCompression from 'browser-image-compression'
 
 type FileUploaderProps = {
   defaultImage?: string
@@ -10,6 +11,9 @@ type FileUploaderProps = {
     openFileDialog: () => void
   }) => React.ReactNode
 }
+
+const MAX_SIZE_MB = 5
+const MAX_SIZE_BYTES = MAX_SIZE_MB * 1024 * 1024
 
 export default function FileUploader({
   defaultImage,
@@ -23,27 +27,19 @@ export default function FileUploader({
     const file = e.target.files?.[0]
     if (!file) return
 
-    if (
-      file.type === 'image/svg+xml' ||
-      file.name.toLowerCase().endsWith('.svg')
-    ) {
-      toast.error('SVG files are not allowed.')
-      e.target.value = ''
-      return
-    }
-
+    // === 1️⃣ Handle HEIC conversion ===
     const fileName = file.name.toLowerCase()
-    const isHeicByExt = fileName.endsWith('.heic') || fileName.endsWith('.heif')
-    const isHeicByType =
-      file.type === 'image/heic' || file.type === 'image/heif'
-    const isHeic = isHeicByExt || isHeicByType
+    const isHeic =
+      fileName.endsWith('.heic') ||
+      fileName.endsWith('.heif') ||
+      file.type === 'image/heic' ||
+      file.type === 'image/heif'
 
     let finalFile: File = file
 
     if (isHeic) {
       try {
         toast('Converting iPhone photo...')
-
         const convertedBlob: any = await heic2any({
           blob: file,
           toType: 'image/jpeg',
@@ -74,6 +70,39 @@ export default function FileUploader({
       }
     }
 
+    // === 2️⃣ Check and compress large files ===
+    if (finalFile.size > MAX_SIZE_BYTES) {
+      try {
+        toast('Compressing large image...')
+        const compressedBlob = await imageCompression(finalFile, {
+          maxSizeMB: 4, // target ~4MB
+          maxWidthOrHeight: 2000, // optional: resize very large images
+          useWebWorker: true,
+          initialQuality: 0.8,
+        })
+        finalFile = new File([compressedBlob], finalFile.name, {
+          type: compressedBlob.type,
+        })
+        toast.dismiss()
+        toast.success('Image compressed successfully!')
+      } catch (err) {
+        console.error('Image compression failed:', err)
+        toast.dismiss()
+        toast.error('Failed to compress image.')
+        return
+      }
+    }
+
+    // === 3️⃣ Validate file type ===
+    if (
+      finalFile.type === 'image/svg+xml' ||
+      finalFile.name.toLowerCase().endsWith('.svg')
+    ) {
+      toast.error('SVG files are not allowed.')
+      e.target.value = ''
+      return
+    }
+
     if (
       !finalFile.type.startsWith('image/') &&
       !finalFile.name.match(/\.(jpe?g|png|webp|gif)$/i)
@@ -83,6 +112,7 @@ export default function FileUploader({
       return
     }
 
+    // === 4️⃣ Create preview & send ===
     const previewUrl = URL.createObjectURL(finalFile)
     setPreview(previewUrl)
     onFileSelect(finalFile)
