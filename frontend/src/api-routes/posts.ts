@@ -10,7 +10,7 @@ export const fetchPosts = async () => {
 
 export const createPost = async (postData: FormData) => {
   const { data } = await axios.post<Post>(
-    'http://localhost:8080/api/post',
+    'https://chatter-r8i2.onrender.com/api/post',
     postData,
     {
       headers: {
