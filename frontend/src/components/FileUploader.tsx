@@ -26,6 +26,22 @@ export default function FileUploader({
     const file = e.target.files?.[0]
     if (!file) return
 
+    await new Promise((r) => setTimeout(r, 200))
+
+    console.log('📁 File info:', {
+      name: file.name,
+      type: file.type,
+      sizeMB: (file.size / (1024 * 1024)).toFixed(2),
+    })
+
+    toast(
+      `📸 File selected:
+Name: ${file.name || 'unknown'}
+Type: ${file.type || 'unknown'}
+Size: ${(file.size / (1024 * 1024)).toFixed(2)} MB`,
+      { duration: 4000 },
+    )
+
     if (
       file.type === 'image/svg+xml' ||
       file.name.toLowerCase().endsWith('.svg')
@@ -41,13 +57,14 @@ export default function FileUploader({
     const isHeicOrHeif =
       fileName.endsWith('.heic') ||
       fileName.endsWith('.heif') ||
-      mimeType === 'image/heic' ||
-      mimeType === 'image/heif'
+      mimeType.includes('heic') ||
+      mimeType.includes('heif')
 
     let finalFile: File = file
-
     if (isHeicOrHeif) {
       try {
+        toast.loading('Converting photo...')
+        console.log('🧩 Detected HEIC/HEIF file — starting conversion...')
         const converted = await heic2any({
           blob: file,
           toType: 'image/jpeg',
@@ -55,44 +72,56 @@ export default function FileUploader({
         })
 
         const blob = Array.isArray(converted) ? converted[0] : converted
-
         finalFile = new File(
           [blob],
           file.name.replace(/\.(heic|heif)$/i, '.jpg'),
           { type: 'image/jpeg' },
         )
 
+        toast.dismiss()
         toast.success('Converted to JPEG!')
+        console.log('✅ Converted file:', {
+          name: finalFile.name,
+          type: finalFile.type,
+          sizeMB: (finalFile.size / (1024 * 1024)).toFixed(2),
+        })
       } catch (err) {
-        console.error('HEIC/HEIF conversion failed:', err)
-        toast.dismiss('heic')
+        console.error('❌ HEIC/HEIF conversion failed:', err)
+        toast.dismiss()
         toast.error('Failed to convert photo. Try exporting as JPEG instead.')
         e.target.value = ''
         return
-      } finally {
-        toast.dismiss('heic')
       }
     }
 
     if (finalFile.size > MAX_FILE_SIZE) {
       try {
+        toast.loading('Compressing image...')
+        console.log('🗜️ Compressing large image...')
+
         const compressed = await imageCompression(finalFile, {
           maxSizeMB: 1.8,
           maxWidthOrHeight: 1920,
           initialQuality: 0.8,
+          useWebWorker: true,
         })
 
         finalFile = new File([compressed], finalFile.name, {
           type: compressed.type,
         })
 
+        toast.dismiss()
         toast.success('Image compressed!')
+        console.log('✅ Compressed file:', {
+          name: finalFile.name,
+          type: finalFile.type,
+          sizeMB: (finalFile.size / (1024 * 1024)).toFixed(2),
+        })
       } catch (err) {
-        console.error('Image compression failed:', err)
-        toast.dismiss('compress')
+        console.error('❌ Image compression failed:', err)
+        toast.dismiss()
         toast.error('Failed to compress image.')
-      } finally {
-        toast.dismiss('compress')
+        return
       }
     }
 
