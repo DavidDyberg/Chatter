@@ -125,20 +125,6 @@ Size: ${(file.size / (1024 * 1024)).toFixed(2)} MB`,
       }
     }
 
-    // Ensure file has a proper image extension — fix for iOS camera
-    if (!/\.(jpe?g|png|webp|gif)$/i.test(finalFile.name)) {
-      console.log('📸 Fixing filename — missing extension:', finalFile.name)
-      const correctedName = 'camera-photo.jpg'
-      finalFile = new File([finalFile], correctedName, { type: finalFile.type })
-    }
-
-    // Validate that it’s an image file
-    if (!finalFile.type.startsWith('image/')) {
-      toast.error('Only image files are allowed.')
-      e.target.value = ''
-      return
-    }
-
     const previewUrl = URL.createObjectURL(finalFile)
     setPreview(previewUrl)
     onFileSelect(finalFile)
