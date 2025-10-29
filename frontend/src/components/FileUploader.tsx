@@ -13,7 +13,7 @@ type FileUploaderProps = {
 }
 
 const TARGET_SIZE_MB = 1.8
-const SKIP_COMPRESSION_BELOW_BYTES = 200 * 1024 // 200 KB
+const SKIP_COMPRESSION_BELOW_BYTES = 200 * 1024
 
 export default function FileUploader({
   defaultImage,
@@ -40,7 +40,6 @@ export default function FileUploader({
     const fileName = file.name.toLowerCase()
     const mimeType = file.type.toLowerCase()
 
-    // Convert HEIC/HEIF to JPEG
     const isHeicOrHeif =
       fileName.endsWith('.heic') ||
       fileName.endsWith('.heif') ||
@@ -74,7 +73,6 @@ export default function FileUploader({
       }
     }
 
-    // Compress only if file is bigger than 200 KB
     if (finalFile.size > SKIP_COMPRESSION_BELOW_BYTES) {
       try {
         toast('Compressing image...')
@@ -97,7 +95,6 @@ export default function FileUploader({
       }
     }
 
-    // Preview and callback
     const previewUrl = URL.createObjectURL(finalFile)
     setPreview(previewUrl)
     onFileSelect(finalFile)
