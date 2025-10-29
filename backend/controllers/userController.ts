@@ -38,7 +38,7 @@ export const getUserById = async (req: Request, res: Response) => {
     const isMongoId = /^[0-9a-fA-F]{24}$/.test(id);
 
     const user = await prisma.user.findUnique({
-      where: isMongoId ? { id } : { auth0ID: id },
+      where: isMongoId ? { id } : { userName: id },
       include: {
         posts: {
           orderBy: [{ createdAt: "desc" }],
