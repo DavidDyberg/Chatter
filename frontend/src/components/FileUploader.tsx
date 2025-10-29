@@ -48,9 +48,6 @@ export default function FileUploader({
 
     if (isHeicOrHeif) {
       try {
-        const fileSizeInMB = (file.size / (1024 * 1024)).toFixed(2)
-        alert(`fileType:${file.type}, fileSize:${fileSizeInMB} MB`)
-
         const converted = await heic2any({
           blob: file,
           toType: 'image/jpeg',
@@ -79,8 +76,6 @@ export default function FileUploader({
 
     if (finalFile.size > MAX_FILE_SIZE) {
       try {
-        toast.loading('Compressing image...')
-
         const compressed = await imageCompression(finalFile, {
           maxSizeMB: 1.8,
           maxWidthOrHeight: 1920,
