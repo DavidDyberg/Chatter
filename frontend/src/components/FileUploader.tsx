@@ -12,7 +12,8 @@ type FileUploaderProps = {
   }) => React.ReactNode
 }
 
-const MAX_FILE_SIZE = 2 * 1024 * 1024
+const TARGET_SIZE_MB = 1.8
+const SKIP_COMPRESSION_BELOW_BYTES = 200 * 1024 // 200 KB
 
 export default function FileUploader({
   defaultImage,
@@ -26,22 +27,6 @@ export default function FileUploader({
     const file = e.target.files?.[0]
     if (!file) return
 
-    await new Promise((r) => setTimeout(r, 200))
-
-    console.log('📁 File info:', {
-      name: file.name,
-      type: file.type,
-      sizeMB: (file.size / (1024 * 1024)).toFixed(2),
-    })
-
-    toast(
-      `📸 File selected:
-Name: ${file.name || 'unknown'}
-Type: ${file.type || 'unknown'}
-Size: ${(file.size / (1024 * 1024)).toFixed(2)} MB`,
-      { duration: 4000 },
-    )
-
     if (
       file.type === 'image/svg+xml' ||
       file.name.toLowerCase().endsWith('.svg')
@@ -51,42 +36,37 @@ Size: ${(file.size / (1024 * 1024)).toFixed(2)} MB`,
       return
     }
 
+    let finalFile: File = file
     const fileName = file.name.toLowerCase()
     const mimeType = file.type.toLowerCase()
 
+    // Convert HEIC/HEIF to JPEG
     const isHeicOrHeif =
       fileName.endsWith('.heic') ||
       fileName.endsWith('.heif') ||
-      mimeType.includes('heic') ||
-      mimeType.includes('heif')
+      mimeType === 'image/heic' ||
+      mimeType === 'image/heif'
 
-    let finalFile: File = file
     if (isHeicOrHeif) {
       try {
-        toast.loading('Converting photo...')
-        console.log('🧩 Detected HEIC/HEIF file — starting conversion...')
+        toast('Converting iPhone photo...')
         const converted = await heic2any({
           blob: file,
           toType: 'image/jpeg',
           quality: 0.9,
         })
-
         const blob = Array.isArray(converted) ? converted[0] : converted
         finalFile = new File(
           [blob],
           file.name.replace(/\.(heic|heif)$/i, '.jpg'),
-          { type: 'image/jpeg' },
+          {
+            type: 'image/jpeg',
+          },
         )
-
         toast.dismiss()
-        toast.success('Converted to JPEG!')
-        console.log('✅ Converted file:', {
-          name: finalFile.name,
-          type: finalFile.type,
-          sizeMB: (finalFile.size / (1024 * 1024)).toFixed(2),
-        })
+        toast.success('Photo converted to JPEG!')
       } catch (err) {
-        console.error('❌ HEIC/HEIF conversion failed:', err)
+        console.error('HEIC/HEIF conversion failed:', err)
         toast.dismiss()
         toast.error('Failed to convert photo. Try exporting as JPEG instead.')
         e.target.value = ''
@@ -94,37 +74,30 @@ Size: ${(file.size / (1024 * 1024)).toFixed(2)} MB`,
       }
     }
 
-    if (finalFile.size > MAX_FILE_SIZE) {
+    // Compress only if file is bigger than 200 KB
+    if (finalFile.size > SKIP_COMPRESSION_BELOW_BYTES) {
       try {
-        toast.loading('Compressing image...')
-        console.log('🗜️ Compressing large image...')
-
-        const compressed = await imageCompression(finalFile, {
-          maxSizeMB: 1.8,
+        toast('Compressing image...')
+        const compressedBlob = await imageCompression(finalFile, {
+          maxSizeMB: TARGET_SIZE_MB,
           maxWidthOrHeight: 1920,
           initialQuality: 0.8,
           useWebWorker: true,
         })
-
-        finalFile = new File([compressed], finalFile.name, {
-          type: compressed.type,
+        finalFile = new File([compressedBlob], finalFile.name, {
+          type: compressedBlob.type,
         })
-
         toast.dismiss()
-        toast.success('Image compressed!')
-        console.log('✅ Compressed file:', {
-          name: finalFile.name,
-          type: finalFile.type,
-          sizeMB: (finalFile.size / (1024 * 1024)).toFixed(2),
-        })
+        toast.success('Image compressed successfully!')
       } catch (err) {
-        console.error('❌ Image compression failed:', err)
+        console.error('Image compression failed:', err)
         toast.dismiss()
         toast.error('Failed to compress image.')
         return
       }
     }
 
+    // Preview and callback
     const previewUrl = URL.createObjectURL(finalFile)
     setPreview(previewUrl)
     onFileSelect(finalFile)
