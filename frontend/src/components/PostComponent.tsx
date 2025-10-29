@@ -46,7 +46,11 @@ export const PostComponent: React.FC<PostComponentProps> = ({
         <div className="flex flex-col pt-2 gap-2">
           <p>{content}</p>
           {postImage && (
-            <img src={postImage} alt="Post image" className="rounded-xl" />
+            <img
+              src={postImage}
+              alt="Post image"
+              className="rounded-xl max-w-[500px] w-full"
+            />
           )}
           <div className="flex gap-3">
             <div className="flex gap-1">

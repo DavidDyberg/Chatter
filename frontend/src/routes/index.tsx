@@ -5,6 +5,8 @@ import { ButtonComponent } from '@/components/Button'
 import { useQuery } from '@tanstack/react-query'
 import { fetchPosts } from '@/api-routes/posts'
 import { PostSkeleton } from '@/components/skeleton/PostSkeleton'
+import { CreatePostModal } from '@/components/CreatePostModal'
+import { useState } from 'react'
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -18,7 +20,13 @@ export const Route = createFileRoute('/')({
 })
 
 function App() {
-  const { data: posts, isPending } = useQuery({
+  const [postModal, setPostModal] = useState(false)
+
+  const {
+    data: posts,
+    isPending,
+    refetch,
+  } = useQuery({
     queryKey: ['posts'],
     queryFn: fetchPosts,
   })
@@ -28,7 +36,20 @@ function App() {
     <div className="pt-8 pl-4 pr-4">
       <div className="flex items-center justify-between">
         <p className="text-2xl font-bold">Welcome {user?.name}</p>
-        <ButtonComponent variant="Primary" label="Post" />
+        {postModal && (
+          <CreatePostModal
+            onClose={() => setPostModal(false)}
+            onSave={() => {
+              setPostModal(false)
+              refetch()
+            }}
+          />
+        )}
+        <ButtonComponent
+          onClick={() => setPostModal(true)}
+          variant="Primary"
+          label="Post"
+        />
       </div>
 
       <div className="flex flex-col gap-4 pt-4">

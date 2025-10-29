@@ -7,3 +7,17 @@ export const fetchPosts = async () => {
   )
   return data
 }
+
+export const createPost = async (postData: FormData) => {
+  const { data } = await axios.post<Post>(
+    'https://chatter-r8i2.onrender.com/api/post',
+    postData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    },
+  )
+
+  return data
+}

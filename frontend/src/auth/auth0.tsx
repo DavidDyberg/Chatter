@@ -1,5 +1,6 @@
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react'
-import { createContext, useContext } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
+import type { User } from '@/types/types'
 
 interface Auth0ContextType {
   isAuthenticated: boolean
@@ -7,6 +8,8 @@ interface Auth0ContextType {
   login: () => void
   logout: () => void
   isLoading: boolean
+  appUser?: User | null
+  refreshAppUser: () => Promise<void>
 }
 
 const Auth0Context = createContext<Auth0ContextType | undefined>(undefined)
@@ -32,13 +35,49 @@ function Auth0ContextProvider({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, user, loginWithRedirect, logout, isLoading } =
     useAuth0()
 
-  const contextValue = {
+  const [appUser, setAppUser] = useState<User | null | undefined>(undefined)
+
+  async function refreshAppUser() {
+    if (!user?.email || !user?.sub) return
+    try {
+      const res = await fetch(
+        'https://chatter-r8i2.onrender.com/api/auth/sync',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: user.email,
+            name: user.name,
+            auth0ID: user.sub,
+          }),
+        },
+      )
+      if (res.ok) {
+        const json = await res.json()
+        setAppUser(json)
+      } else {
+        console.error('Failed to sync user', await res.text())
+      }
+    } catch (err) {
+      console.error('Sync error', err)
+    }
+  }
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && user) {
+      refreshAppUser()
+    }
+  }, [isLoading, isAuthenticated, user])
+
+  const contextValue: Auth0ContextType = {
     isAuthenticated,
     user,
     login: loginWithRedirect,
     logout: () =>
       logout({ logoutParams: { returnTo: window.location.origin } }),
     isLoading,
+    appUser,
+    refreshAppUser,
   }
 
   return (
