@@ -97,15 +97,33 @@ export const createPost = async (req: Request, res: Response) => {
     if (!postAuthor) {
       return res
         .status(404)
-        .json({ message: `User with id: ${userId} do not exist` });
+        .json({ message: `User with id: ${userId} does not exist` });
     }
 
-    const files =
-      (req.files as { [fieldname: string]: CloudinaryFile[] }) || {};
+    const files = req.files as
+      | { [fieldname: string]: Express.Multer.File[] }
+      | undefined;
 
-    const imageUrl = files?.image?.[0]?.path || null;
-    const imageId =
-      files?.image?.[0]?.filename || files?.image?.[0]?.public_id || null;
+    let imageUrl: string | null = null;
+    let imageId: string | null = null;
+
+    if (files?.image?.[0]) {
+      const file = files.image[0];
+
+      const result = await new Promise<any>((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "post-images" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+        uploadStream.end(file.buffer);
+      });
+
+      imageUrl = result.secure_url;
+      imageId = result.public_id;
+    }
 
     const post = await prisma.post.create({
       data: {
@@ -115,8 +133,10 @@ export const createPost = async (req: Request, res: Response) => {
         imageId: imageId,
       },
     });
+
     res.status(201).json(post);
   } catch (error) {
+    console.error("Create post error:", error);
     if (error instanceof Error) {
       res.status(500).json({ message: error.message });
     } else {
