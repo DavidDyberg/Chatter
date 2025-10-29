@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import { createPost } from '@/api-routes/posts'
 import { useAuth0Context } from '@/auth/auth0'
 import toast from 'react-hot-toast'
+import FileUploader from '@/components/FileUploader'
 
 type PostModalProps = {
   onSave: () => void
@@ -16,7 +17,7 @@ export const CreatePostModal: React.FC<PostModalProps> = ({
 }) => {
   const [content, setContent] = useState('')
   const [image, setImage] = useState<File | null>(null)
-  const [isContent, setIsContent] = useState(false)
+  const [contentError, setContentError] = useState(false)
 
   const { appUser } = useAuth0Context()
 
@@ -35,7 +36,7 @@ export const CreatePostModal: React.FC<PostModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!content.trim()) {
-      toast.error('Please enter content')
+      setContentError(true)
       return
     }
 
@@ -50,6 +51,7 @@ export const CreatePostModal: React.FC<PostModalProps> = ({
     formData.append('userId', appUser.id)
 
     mutate(formData)
+    setContentError(false)
   }
 
   useEffect(() => {
@@ -70,10 +72,40 @@ export const CreatePostModal: React.FC<PostModalProps> = ({
 
         <textarea
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e) => {
+            setContent(e.target.value)
+            if (contentError && e.target.value.trim()) {
+              setContentError(false)
+            }
+          }}
           placeholder="What's on your mind?"
-          className="w-full min-h-[120px] bg-transparent border border-gray-600 rounded-lg p-3 focus:border-purple-light focus:outline-none"
+          className={`w-full min-h-[120px] bg-transparent border rounded-lg p-3 focus:outline-none ${contentError ? 'border-primary-red focus:border-primary-red' : 'border-gray-600 focus:border-purple-light'}`}
         />
+
+        {contentError && (
+          <p className="text-red-500 text-sm mt-1">Content is required</p>
+        )}
+
+        <div className="mt-4">
+          <FileUploader onFileSelect={setImage}>
+            {({ preview, openFileDialog }) => (
+              <div
+                className="cursor-pointer border border-gray-600 rounded-lg p-2 flex items-center justify-center"
+                onClick={openFileDialog}
+              >
+                {preview ? (
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="max-h-48 object-contain"
+                  />
+                ) : (
+                  <p className="text-gray-400">Click to add an image</p>
+                )}
+              </div>
+            )}
+          </FileUploader>
+        </div>
 
         <div className="flex justify-end gap-2 mt-6">
           <ButtonComponent label="Cancel" variant="Delete" onClick={onClose} />
