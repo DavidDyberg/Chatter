@@ -12,7 +12,7 @@ type FileUploaderProps = {
   }) => React.ReactNode
 }
 
-const MAX_FILE_SIZE = 2 * 1024 * 1024
+const MAX_FILE_SIZE = 5 * 1024 * 1024
 
 export default function FileUploader({
   defaultImage,
@@ -48,7 +48,7 @@ export default function FileUploader({
 
     if (isHeicOrHeif) {
       try {
-        toast.loading('Converting photo...')
+        alert(`fileType:${file.type}, fileSize:${file.size}`)
 
         const converted = await heic2any({
           blob: file,
