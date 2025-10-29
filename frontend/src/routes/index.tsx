@@ -22,7 +22,11 @@ export const Route = createFileRoute('/')({
 function App() {
   const [postModal, setPostModal] = useState(false)
 
-  const { data: posts, isPending } = useQuery({
+  const {
+    data: posts,
+    isPending,
+    refetch,
+  } = useQuery({
     queryKey: ['posts'],
     queryFn: fetchPosts,
   })
@@ -35,7 +39,10 @@ function App() {
         {postModal && (
           <CreatePostModal
             onClose={() => setPostModal(false)}
-            onSave={() => console.log('HEJ')}
+            onSave={() => {
+              setPostModal(false)
+              refetch()
+            }}
           />
         )}
         <ButtonComponent
