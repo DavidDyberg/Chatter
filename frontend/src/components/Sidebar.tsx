@@ -9,10 +9,12 @@ import {
 } from 'lucide-react'
 import { useActiveRoute } from '@/hooks/useActiveRoute'
 import { useAuth0 } from '@auth0/auth0-react'
+import { useAuth0Context } from '@/auth/auth0'
 
 export default function Sidebar() {
   const isActiveRoute = useActiveRoute()
   const { user, loginWithRedirect, logout } = useAuth0()
+  const { appUser } = useAuth0Context()
   return (
     <header className="text-white pt-8">
       <h1 className="font-bold text-white text-3xl">Chatter</h1>
@@ -51,7 +53,7 @@ export default function Sidebar() {
         {user && (
           <>
             <Link
-              params={{ profileId: user.sub || '' }}
+              params={{ profileId: appUser?.id || '' }}
               activeProps={{ style: { fontWeight: 600 } }}
               className="flex gap-4 items-center"
               to="/profile/$profileId"
