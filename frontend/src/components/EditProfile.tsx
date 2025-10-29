@@ -28,6 +28,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const [biography, setBiography] = useState(bio)
   const [newProfileImage, setNewProfileImage] = useState<File | null>(null)
   const [newBannerImage, setNewBannerImage] = useState<File | null>(null)
+  const [usernameError, setUsernameError] = useState(false)
 
   const { mutate, isPending } = useMutation({
     mutationFn: (updatedData: FormData) => editUser(id, updatedData),
@@ -44,6 +45,11 @@ export const EditProfile: React.FC<EditProfileProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
+    if (!name.trim()) {
+      setUsernameError(true)
+      return
+    }
+
     const formData = new FormData()
     formData.append('userName', name)
     formData.append('bio', biography)
@@ -52,6 +58,7 @@ export const EditProfile: React.FC<EditProfileProps> = ({
     if (newBannerImage) formData.append('profileBanner', newBannerImage)
 
     mutate(formData)
+    setUsernameError(false)
   }
 
   return (
@@ -116,11 +123,19 @@ export const EditProfile: React.FC<EditProfileProps> = ({
             Username:
           </label>
           <input
-            className="font-bold text-xl border border-gray-600 rounded-lg p-2 focus:border-purple-light focus:outline-none"
+            className={`font-bold text-xl rounded-lg p-2 border focus:outline-none ${usernameError ? 'border-primary-red' : 'border-gray-600 focus:border-purple-light'}`}
             value={name}
-            onChange={(e) => setName(e.target.value)}
             id="userName"
+            onChange={(e) => {
+              setName(e.target.value)
+              if (usernameError) {
+                setUsernameError(false)
+              }
+            }}
           />
+          {usernameError && (
+            <p className="text-primary-red">Username is required</p>
+          )}
         </div>
         <ButtonComponent
           className="p-2 pl-4 pr-4 hidden md:block"
