@@ -40,7 +40,7 @@ export const CreatePostModal: React.FC<PostModalProps> = ({
       return
     }
 
-    if (!appUser?.id) {
+    if (!appUser) {
       toast.error('You must be logged in to post')
       return
     }
