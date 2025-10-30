@@ -7,6 +7,7 @@ import { fetchPosts } from '@/api-routes/posts'
 import { PostSkeleton } from '@/components/skeleton/PostSkeleton'
 import { CreatePostModal } from '@/components/CreatePostModal'
 import { useState } from 'react'
+import { PopupModal } from '@/components/PopupModal'
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -21,6 +22,9 @@ export const Route = createFileRoute('/')({
 
 function App() {
   const [postModal, setPostModal] = useState(false)
+  const [popUpModal, setPopUpModal] = useState(false)
+
+  const { user, loginWithRedirect } = useAuth0()
 
   const {
     data: posts,
@@ -31,22 +35,16 @@ function App() {
     queryFn: fetchPosts,
   })
 
-  const { user } = useAuth0()
   return (
     <div className="pt-8 pl-4 pr-4">
       <div className="flex items-center justify-between">
         <p className="text-2xl font-bold">Welcome {user?.name}</p>
-        {postModal && (
-          <CreatePostModal
-            onClose={() => setPostModal(false)}
-            onSave={() => {
-              setPostModal(false)
-              refetch()
-            }}
-          />
-        )}
         <ButtonComponent
-          onClick={() => setPostModal(true)}
+          onClick={() => {
+            {
+              user ? setPostModal(true) : setPopUpModal(true)
+            }
+          }}
           variant="Primary"
           label="Post"
         />
@@ -72,6 +70,25 @@ function App() {
           ))
         )}
       </div>
+      {popUpModal && (
+        <PopupModal
+          title="Not logged in"
+          content="To create a post you need to be logged in. Do you want to be redirected to the login page?"
+          buttonCloseLabel="No"
+          buttonActionLabel="Yes"
+          onClose={() => setPopUpModal(false)}
+          action={() => loginWithRedirect()}
+        />
+      )}
+      {postModal && (
+        <CreatePostModal
+          onClose={() => setPostModal(false)}
+          onSave={() => {
+            setPostModal(false)
+            refetch()
+          }}
+        />
+      )}
     </div>
   )
 }
