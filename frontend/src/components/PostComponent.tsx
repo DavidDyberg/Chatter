@@ -1,17 +1,23 @@
-import { BadgeCheck, Heart, MessageCircle } from 'lucide-react'
+import { BadgeCheck, Heart, MessageCircle, Trash2 } from 'lucide-react'
 import { cn } from '@/utils/classnames'
 import { formatDate } from '@/utils/formatDate'
+import { useAuth0Context } from '@/auth/auth0'
+import { PopupModal } from './PopupModal'
+import { useState } from 'react'
 
 type PostComponentProps = {
   content: string
   authorName: string
   authorImage: string
   postImage: string
+  authorId: string
   likesAmmount: number
   commentsAmmount: number
   created_at: string
   isAdmin: boolean
   onClick?: () => void
+  onDelete?: () => void
+  isDeleting?: boolean
   className?: string
 }
 
@@ -20,13 +26,21 @@ export const PostComponent: React.FC<PostComponentProps> = ({
   authorName,
   authorImage,
   postImage,
+  authorId,
   likesAmmount,
   commentsAmmount,
   created_at,
   isAdmin,
   onClick,
+  onDelete,
+  isDeleting = false,
   className,
 }) => {
+  const [popUpModal, setPopUpModal] = useState(false)
+  const { isUserMe, user } = useAuth0Context()
+
+  const isMyPost = isUserMe(authorId)
+
   return (
     <section onClick={onClick} className={cn('flex gap-2', className)}>
       <img
@@ -52,20 +66,38 @@ export const PostComponent: React.FC<PostComponentProps> = ({
               className="rounded-xl max-w-[500px] w-full"
             />
           )}
-          <div className="flex gap-3">
+          <div className="flex gap-3 text-sm text-purple-light">
             <div className="flex gap-1">
               <Heart size={20} color="#aea7ff" />
-              <p className="text-sm text-purple-light">{likesAmmount} Likes</p>
+              <p>{likesAmmount} Likes</p>
             </div>
             <div className="flex gap-1">
               <MessageCircle size={20} color="#aea7ff" />
-              <p className="text-sm text-purple-light">
-                {commentsAmmount} Comments
-              </p>
+              <p>{commentsAmmount} Comments</p>
             </div>
+            {(isMyPost || user?.role === 'ADMIN') && (
+              <div
+                onClick={() => setPopUpModal(true)}
+                className="flex gap-1 cursor-pointer"
+              >
+                <Trash2 size={20} color="#aea7ff" />
+                <p>Delete</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
+      {popUpModal && (
+        <PopupModal
+          title="Delete post"
+          content="Are you sure you want to delete this post? It can't be undone"
+          buttonCloseLabel="Cancel"
+          buttonActionLabel="Delete"
+          onClose={() => setPopUpModal(false)}
+          action={() => onDelete?.()}
+          isLoading={isDeleting}
+        />
+      )}
     </section>
   )
 }

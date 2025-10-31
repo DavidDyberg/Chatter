@@ -10,6 +10,7 @@ import { PostSkeleton } from '@/components/skeleton/PostSkeleton'
 import { useState } from 'react'
 import { EditProfile } from '@/components/EditProfile'
 import { useAuth0Context } from '@/auth/auth0'
+import { useDeletePost } from '@/hooks/useDeletePost'
 
 export const Route = createFileRoute('/profile/$profileId')({
   component: RouteComponent,
@@ -34,6 +35,11 @@ function RouteComponent() {
     queryKey: ['user', params.profileId],
     queryFn: () => getUser(params.profileId),
   })
+
+  const { mutate: deletePost, isPending: isDeletePending } = useDeletePost(
+    params.profileId,
+  )
+
   const isOwner = isUserMe(params.profileId)
   return (
     <section className="relative">
@@ -123,6 +129,7 @@ function RouteComponent() {
           {userData?.posts.map((post) => (
             <PostComponent
               key={post.id}
+              authorId={post.user_id}
               content={post.content}
               authorName={userData.userName}
               authorImage={userData.profileImage || '/blank-profile.webp'}
@@ -131,6 +138,8 @@ function RouteComponent() {
               commentsAmmount={post._count.comments}
               created_at={formatDate(post.createdAt)}
               isAdmin={userData.role === 'ADMIN'}
+              onDelete={() => deletePost(post.id)}
+              isDeleting={isDeletePending}
             />
           ))}
         </div>
