@@ -8,6 +8,7 @@ import { CreatePostModal } from '@/components/CreatePostModal'
 import { useState } from 'react'
 import { PopupModal } from '@/components/PopupModal'
 import { useAuth0Context } from '@/auth/auth0'
+import { useDeletePost } from '@/hooks/useDeletePost'
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -34,6 +35,8 @@ function App() {
     queryKey: ['posts'],
     queryFn: fetchPosts,
   })
+
+  const { mutate: deletePost, isPending: isDeletePending } = useDeletePost()
 
   return (
     <div className="pt-8 pl-4 pr-4">
@@ -67,6 +70,8 @@ function App() {
               authorImage={post.user.profileImage || '/blank-profile.webp'}
               postImage={post.image}
               isAdmin={post.user.role === 'ADMIN'}
+              isDeleting={isDeletePending}
+              onDelete={() => deletePost(post.id)}
             />
           ))
         )}
