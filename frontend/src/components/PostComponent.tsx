@@ -37,7 +37,7 @@ export const PostComponent: React.FC<PostComponentProps> = ({
   className,
 }) => {
   const [popUpModal, setPopUpModal] = useState(false)
-  const { isUserMe } = useAuth0Context()
+  const { isUserMe, user } = useAuth0Context()
 
   const isMyPost = isUserMe(authorId)
 
@@ -75,7 +75,7 @@ export const PostComponent: React.FC<PostComponentProps> = ({
               <MessageCircle size={20} color="#aea7ff" />
               <p>{commentsAmmount} Comments</p>
             </div>
-            {isMyPost && (
+            {(isMyPost || user?.role === 'ADMIN') && (
               <div
                 onClick={() => setPopUpModal(true)}
                 className="flex gap-1 cursor-pointer"
@@ -90,7 +90,7 @@ export const PostComponent: React.FC<PostComponentProps> = ({
       {popUpModal && (
         <PopupModal
           title="Delete post"
-          content="Are you sure you want to delete your post? It can not be undone"
+          content="Are you sure you want to delete this post? It can't be undone"
           buttonCloseLabel="Cancel"
           buttonActionLabel="Delete"
           onClose={() => setPopUpModal(false)}
