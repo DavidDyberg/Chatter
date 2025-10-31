@@ -2,6 +2,8 @@ import { BadgeCheck, Heart, MessageCircle, Trash2 } from 'lucide-react'
 import { cn } from '@/utils/classnames'
 import { formatDate } from '@/utils/formatDate'
 import { useAuth0Context } from '@/auth/auth0'
+import { PopupModal } from './PopupModal'
+import { useState } from 'react'
 
 type PostComponentProps = {
   content: string
@@ -15,6 +17,7 @@ type PostComponentProps = {
   isAdmin: boolean
   onClick?: () => void
   onDelete?: () => void
+  isDeleting?: boolean
   className?: string
 }
 
@@ -30,8 +33,10 @@ export const PostComponent: React.FC<PostComponentProps> = ({
   isAdmin,
   onClick,
   onDelete,
+  isDeleting = false,
   className,
 }) => {
+  const [popUpModal, setPopUpModal] = useState(false)
   const { isUserMe } = useAuth0Context()
 
   const isMyPost = isUserMe(authorId)
@@ -71,7 +76,10 @@ export const PostComponent: React.FC<PostComponentProps> = ({
               <p>{commentsAmmount} Comments</p>
             </div>
             {isMyPost && (
-              <div onClick={onDelete} className="flex gap-1 cursor-pointer">
+              <div
+                onClick={() => setPopUpModal(true)}
+                className="flex gap-1 cursor-pointer"
+              >
                 <Trash2 size={20} color="#aea7ff" />
                 <p>Delete</p>
               </div>
@@ -79,6 +87,17 @@ export const PostComponent: React.FC<PostComponentProps> = ({
           </div>
         </div>
       </div>
+      {popUpModal && (
+        <PopupModal
+          title="Delete post"
+          content="Are you sure you want to delete your post? It can not be undone"
+          buttonCloseLabel="Cancel"
+          buttonActionLabel="Delete"
+          onClose={() => setPopUpModal(false)}
+          action={() => onDelete?.()}
+          isLoading={isDeleting}
+        />
+      )}
     </section>
   )
 }

@@ -10,6 +10,7 @@ type ModalProps = {
   onClose: () => void
   action: () => void
   className?: string
+  isLoading?: boolean
 }
 
 export const PopupModal: React.FC<ModalProps> = ({
@@ -20,6 +21,7 @@ export const PopupModal: React.FC<ModalProps> = ({
   buttonCloseLabel,
   buttonActionLabel,
   className,
+  isLoading = false,
 }) => {
   useEffect(() => {
     document.body.style.overflow = 'hidden'
@@ -47,11 +49,14 @@ export const PopupModal: React.FC<ModalProps> = ({
               label={buttonCloseLabel}
               variant="Delete"
               onClick={onClose}
+              disabled={isLoading}
             />
             <ButtonComponent
               label={buttonActionLabel}
               variant="Primary"
               onClick={action}
+              isLoading={isLoading}
+              disabled={isLoading}
             />
           </div>
         </div>

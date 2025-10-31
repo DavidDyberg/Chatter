@@ -1,5 +1,5 @@
 import { getUser } from '@/api-routes/user'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { BadgeCheck, ChevronsDown } from 'lucide-react'
 import { ButtonComponent } from '@/components/Button'
@@ -10,6 +10,8 @@ import { PostSkeleton } from '@/components/skeleton/PostSkeleton'
 import { useState } from 'react'
 import { EditProfile } from '@/components/EditProfile'
 import { useAuth0Context } from '@/auth/auth0'
+import { deletePost } from '@/api-routes/posts'
+import toast from 'react-hot-toast'
 
 export const Route = createFileRoute('/profile/$profileId')({
   component: RouteComponent,
@@ -34,6 +36,20 @@ function RouteComponent() {
     queryKey: ['user', params.profileId],
     queryFn: () => getUser(params.profileId),
   })
+
+  const { mutate, isPending: isDeletePending } = useMutation({
+    mutationFn: (id: string) => deletePost(id),
+
+    onSuccess: () => {
+      toast.success('Post deleted successfully')
+      refetch()
+    },
+
+    onError: () => {
+      toast.error('Something went wrong when deleting post, try again later')
+    },
+  })
+
   const isOwner = isUserMe(params.profileId)
   return (
     <section className="relative">
@@ -132,6 +148,8 @@ function RouteComponent() {
               commentsAmmount={post._count.comments}
               created_at={formatDate(post.createdAt)}
               isAdmin={userData.role === 'ADMIN'}
+              onDelete={() => mutate(post.id)}
+              isDeleting={isDeletePending}
             />
           ))}
         </div>
