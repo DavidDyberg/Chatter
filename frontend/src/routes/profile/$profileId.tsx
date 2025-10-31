@@ -28,7 +28,7 @@ function RouteComponent() {
   const [isEditMode, setIsEditMode] = useState(false)
   const [modal, setModal] = useState(false)
   const params = useParams({ from: '/profile/$profileId' })
-  const { isUserMe, logout } = useAuth0Context()
+  const { isUserMe, logout, user } = useAuth0Context()
 
   const {
     data: userData,
@@ -118,13 +118,15 @@ function RouteComponent() {
                         variant="Seacondary"
                         onClick={() => setIsEditMode(true)}
                       />
-
-                      <ButtonComponent
-                        className="p-2 pl-4 pr-4 hidden md:block"
-                        label="Delete account"
-                        variant="Delete"
-                        onClick={() => setModal(true)}
-                      />
+                      {isOwner ||
+                        (user?.role === 'ADMIN' && (
+                          <ButtonComponent
+                            className="p-2 pl-4 pr-4 hidden md:block"
+                            label="Delete account"
+                            variant="Delete"
+                            onClick={() => setModal(true)}
+                          />
+                        ))}
                     </div>
                   )}
                 </div>
@@ -174,14 +176,16 @@ function RouteComponent() {
         </div>
       )}
 
-      <div className="pt-8 px-5">
-        <ButtonComponent
-          className="p-2 pl-4 pr-4 md:hidden w-full"
-          label="Delete account"
-          variant="Delete"
-          onClick={() => setModal(true)}
-        />
-      </div>
+      {(isOwner || user?.role === 'ADMIN') && (
+        <div className="pt-8 px-5">
+          <ButtonComponent
+            className="p-2 pl-4 pr-4 md:hidden w-full"
+            label="Delete account"
+            variant="Delete"
+            onClick={() => setModal(true)}
+          />
+        </div>
+      )}
 
       {modal && (
         <PopupModal
