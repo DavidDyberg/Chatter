@@ -1,5 +1,5 @@
-import { getUser } from '@/api-routes/user'
-import { useQuery } from '@tanstack/react-query'
+import { deleteAccount, getUser } from '@/api-routes/user'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { BadgeCheck, ChevronsDown } from 'lucide-react'
 import { ButtonComponent } from '@/components/Button'
@@ -11,6 +11,8 @@ import { useState } from 'react'
 import { EditProfile } from '@/components/EditProfile'
 import { useAuth0Context } from '@/auth/auth0'
 import { useDeletePost } from '@/hooks/useDeletePost'
+import { PopupModal } from '@/components/PopupModal'
+import toast from 'react-hot-toast'
 
 export const Route = createFileRoute('/profile/$profileId')({
   component: RouteComponent,
@@ -24,8 +26,9 @@ export const Route = createFileRoute('/profile/$profileId')({
 
 function RouteComponent() {
   const [isEditMode, setIsEditMode] = useState(false)
+  const [modal, setModal] = useState(false)
   const params = useParams({ from: '/profile/$profileId' })
-  const { isUserMe } = useAuth0Context()
+  const { isUserMe, logout } = useAuth0Context()
 
   const {
     data: userData,
@@ -36,9 +39,26 @@ function RouteComponent() {
     queryFn: () => getUser(params.profileId),
   })
 
-  const { mutate: deletePost, isPending: isDeletePending } = useDeletePost(
+  const { mutate: deletePost, isPending: isDeletePostPending } = useDeletePost(
     params.profileId,
   )
+
+  const { mutate: removeAccount, isPending: isDeleteAccountPending } =
+    useMutation({
+      mutationFn: () => deleteAccount(params.profileId),
+
+      onSuccess: () => {
+        toast.success('Account was deleted successfully')
+        setModal(false)
+        setTimeout(() => {
+          logout()
+        }, 800)
+      },
+
+      onError: () => {
+        toast.error('Error while deleting account, please try again later')
+      },
+    })
 
   const isOwner = isUserMe(params.profileId)
   return (
@@ -91,12 +111,21 @@ function RouteComponent() {
                     </p>
                   </div>
                   {isOwner && (
-                    <ButtonComponent
-                      className="p-2 pl-4 pr-4"
-                      label="Edit profile"
-                      variant="Seacondary"
-                      onClick={() => setIsEditMode(true)}
-                    />
+                    <div className="flex flex-col gap-4">
+                      <ButtonComponent
+                        className="p-2 pl-4 pr-4"
+                        label="Edit profile"
+                        variant="Seacondary"
+                        onClick={() => setIsEditMode(true)}
+                      />
+
+                      <ButtonComponent
+                        className="p-2 pl-4 pr-4 hidden md:block"
+                        label="Delete account"
+                        variant="Delete"
+                        onClick={() => setModal(true)}
+                      />
+                    </div>
                   )}
                 </div>
                 <p>{userData?.bio}</p>
@@ -139,10 +168,31 @@ function RouteComponent() {
               created_at={formatDate(post.createdAt)}
               isAdmin={userData.role === 'ADMIN'}
               onDelete={() => deletePost(post.id)}
-              isDeleting={isDeletePending}
+              isDeleting={isDeletePostPending}
             />
           ))}
         </div>
+      )}
+
+      <div className="pt-8 px-5">
+        <ButtonComponent
+          className="p-2 pl-4 pr-4 md:hidden w-full"
+          label="Delete account"
+          variant="Delete"
+          onClick={() => setModal(true)}
+        />
+      </div>
+
+      {modal && (
+        <PopupModal
+          title="Delete account"
+          content="Are you shure you want to delete your account, it can't be undone"
+          buttonCloseLabel="Cancel"
+          buttonActionLabel="Delete"
+          onClose={() => setModal(false)}
+          action={() => removeAccount()}
+          isLoading={isDeleteAccountPending}
+        />
       )}
     </section>
   )

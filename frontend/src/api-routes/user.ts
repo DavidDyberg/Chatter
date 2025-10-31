@@ -25,3 +25,11 @@ export const editUser = async (
 
   return data
 }
+
+export const deleteAccount = async (id: string) => {
+  const { data } = await axios.delete<User>(
+    `https://chatter-r8i2.onrender.com/api/user/${id}`,
+  )
+
+  return data
+}
