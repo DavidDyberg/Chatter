@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useAuth0 } from '@auth0/auth0-react'
 import { PostComponent } from '@/components/PostComponent'
 import { ButtonComponent } from '@/components/Button'
 import { useQuery } from '@tanstack/react-query'
@@ -8,6 +7,7 @@ import { PostSkeleton } from '@/components/skeleton/PostSkeleton'
 import { CreatePostModal } from '@/components/CreatePostModal'
 import { useState } from 'react'
 import { PopupModal } from '@/components/PopupModal'
+import { useAuth0Context } from '@/auth/auth0'
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -24,7 +24,7 @@ function App() {
   const [postModal, setPostModal] = useState(false)
   const [popUpModal, setPopUpModal] = useState(false)
 
-  const { user, loginWithRedirect } = useAuth0()
+  const { user, login } = useAuth0Context()
 
   const {
     data: posts,
@@ -38,7 +38,7 @@ function App() {
   return (
     <div className="pt-8 pl-4 pr-4">
       <div className="flex items-center justify-between">
-        <p className="text-2xl font-bold">Welcome {user?.name}</p>
+        <p className="text-2xl font-bold">Welcome {user?.userName}</p>
         <ButtonComponent
           onClick={() => {
             {
@@ -77,7 +77,7 @@ function App() {
           buttonCloseLabel="No"
           buttonActionLabel="Yes"
           onClose={() => setPopUpModal(false)}
-          action={() => loginWithRedirect()}
+          action={() => login()}
         />
       )}
       {postModal && (

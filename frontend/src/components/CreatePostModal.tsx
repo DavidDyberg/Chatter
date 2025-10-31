@@ -19,7 +19,7 @@ export const CreatePostModal: React.FC<PostModalProps> = ({
   const [image, setImage] = useState<File | null>(null)
   const [contentError, setContentError] = useState(false)
 
-  const { appUser } = useAuth0Context()
+  const { user } = useAuth0Context()
 
   const { mutate, isPending } = useMutation({
     mutationFn: createPost,
@@ -40,7 +40,7 @@ export const CreatePostModal: React.FC<PostModalProps> = ({
       return
     }
 
-    if (!appUser) {
+    if (!user) {
       toast.error('You must be logged in to post')
       return
     }
@@ -48,7 +48,7 @@ export const CreatePostModal: React.FC<PostModalProps> = ({
     const formData = new FormData()
     formData.append('content', content)
     if (image) formData.append('image', image)
-    formData.append('userId', appUser.id)
+    formData.append('userId', user.id!)
 
     mutate(formData)
     setContentError(false)

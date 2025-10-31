@@ -1,15 +1,22 @@
 import { Auth0Provider, useAuth0 } from '@auth0/auth0-react'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import type { User } from '@/types/types'
+
+interface CombinedUser extends Partial<User> {
+  email?: string
+  name?: string
+  picture?: string
+  auth0ID?: string
+}
 
 interface Auth0ContextType {
   isAuthenticated: boolean
-  user: any
+  user: CombinedUser | null
   login: () => void
   logout: () => void
   isLoading: boolean
-  appUser?: User | null
   refreshAppUser: () => Promise<void>
+  isUserMe: (id: string | undefined) => boolean
 }
 
 const Auth0Context = createContext<Auth0ContextType | undefined>(undefined)
@@ -24,7 +31,7 @@ export function Auth0Wrapper({ children }: { children: React.ReactNode }) {
         audience: 'https://dev-cjzvm88dsutamr5k.eu.auth0.com/api/v2/',
       }}
       cacheLocation="localstorage"
-      useRefreshTokens={true}
+      useRefreshTokens
     >
       <Auth0ContextProvider>{children}</Auth0ContextProvider>
     </Auth0Provider>
@@ -32,13 +39,18 @@ export function Auth0Wrapper({ children }: { children: React.ReactNode }) {
 }
 
 function Auth0ContextProvider({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, user, loginWithRedirect, logout, isLoading } =
-    useAuth0()
+  const {
+    isAuthenticated,
+    user: auth0User,
+    loginWithRedirect,
+    logout,
+    isLoading,
+  } = useAuth0()
 
-  const [appUser, setAppUser] = useState<User | null | undefined>(undefined)
+  const [appUser, setAppUser] = useState<User | null>(null)
 
   async function refreshAppUser() {
-    if (!user?.email || !user?.sub) return
+    if (!auth0User?.email || !auth0User?.sub) return
     try {
       const res = await fetch(
         'https://chatter-r8i2.onrender.com/api/auth/sync',
@@ -46,9 +58,9 @@ function Auth0ContextProvider({ children }: { children: React.ReactNode }) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            email: user.email,
-            name: user.name,
-            auth0ID: user.sub,
+            email: auth0User.email,
+            name: auth0User.name,
+            auth0ID: auth0User.sub,
           }),
         },
       )
@@ -64,20 +76,39 @@ function Auth0ContextProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated && user) {
+    if (!isLoading && isAuthenticated && auth0User) {
       refreshAppUser()
     }
-  }, [isLoading, isAuthenticated, user])
+  }, [isLoading, isAuthenticated, auth0User])
+
+  const combinedUser = useMemo<CombinedUser | null>(() => {
+    if (!auth0User && !appUser) return null
+    return {
+      ...appUser,
+      name: auth0User?.name,
+      picture: auth0User?.picture,
+      auth0ID: auth0User?.sub,
+    }
+  }, [auth0User, appUser])
+
+  const isUserMe = (id: string | undefined): boolean => {
+    if (!id || !combinedUser) return false
+    return (
+      id === combinedUser.id ||
+      id === combinedUser.auth0ID ||
+      id === combinedUser.email
+    )
+  }
 
   const contextValue: Auth0ContextType = {
     isAuthenticated,
-    user,
-    login: loginWithRedirect,
+    user: combinedUser,
+    login: () => loginWithRedirect(),
     logout: () =>
       logout({ logoutParams: { returnTo: window.location.origin } }),
     isLoading,
-    appUser,
     refreshAppUser,
+    isUserMe,
   }
 
   return (

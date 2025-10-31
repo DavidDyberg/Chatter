@@ -1,6 +1,5 @@
 import { useAuth0Context } from '@/auth/auth0'
 import { useActiveRoute } from '@/hooks/useActiveRoute'
-import { useAuth0 } from '@auth0/auth0-react'
 import { Link } from '@tanstack/react-router'
 import {
   House,
@@ -12,8 +11,7 @@ import {
 
 export default function BottomTabBar() {
   const isActiveRoute = useActiveRoute()
-  const { user, loginWithRedirect } = useAuth0()
-  const { appUser } = useAuth0Context()
+  const { user, login } = useAuth0Context()
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 flex justify-around bg-primary-black py-3 text-white md:hidden text-xs">
@@ -36,7 +34,7 @@ export default function BottomTabBar() {
 
       {!user && (
         <div
-          onClick={() => loginWithRedirect()}
+          onClick={() => login()}
           className="flex flex-col items-center gap-1"
         >
           <LogIn className="stroke-1" />
@@ -45,7 +43,7 @@ export default function BottomTabBar() {
       )}
       {user && (
         <Link
-          params={{ profileId: appUser?.id || '' }}
+          params={{ profileId: user?.id || '' }}
           to="/profile/$profileId"
           className="flex flex-col items-center gap-1"
         >
