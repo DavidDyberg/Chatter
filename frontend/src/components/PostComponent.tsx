@@ -14,6 +14,7 @@ type PostComponentProps = {
   created_at: string
   isAdmin: boolean
   onClick?: () => void
+  onDelete?: () => void
   className?: string
 }
 
@@ -28,6 +29,7 @@ export const PostComponent: React.FC<PostComponentProps> = ({
   created_at,
   isAdmin,
   onClick,
+  onDelete,
   className,
 }) => {
   const { isUserMe } = useAuth0Context()
@@ -69,7 +71,7 @@ export const PostComponent: React.FC<PostComponentProps> = ({
               <p>{commentsAmmount} Comments</p>
             </div>
             {isMyPost && (
-              <div className="flex gap-1">
+              <div onClick={onDelete} className="flex gap-1 cursor-pointer">
                 <Trash2 size={20} color="#aea7ff" />
                 <p>Delete</p>
               </div>

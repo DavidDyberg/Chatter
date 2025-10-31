@@ -21,3 +21,11 @@ export const createPost = async (postData: FormData) => {
 
   return data
 }
+
+export const deletePost = async (id: string) => {
+  const { data } = await axios.delete<Post>(
+    `https://chatter-r8i2.onrender.com/api/post/${id}`,
+  )
+
+  return data
+}
