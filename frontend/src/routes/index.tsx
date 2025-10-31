@@ -56,8 +56,9 @@ function App() {
         ) : (
           posts?.map((post) => (
             <PostComponent
-              key={post.id}
               className="pt-4"
+              key={post.id}
+              authorId={post.user_id}
               likesAmmount={post._count.likes}
               commentsAmmount={post._count.comments}
               created_at={post.createdAt}

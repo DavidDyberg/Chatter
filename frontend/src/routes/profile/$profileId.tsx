@@ -123,6 +123,7 @@ function RouteComponent() {
           {userData?.posts.map((post) => (
             <PostComponent
               key={post.id}
+              authorId={post.user_id}
               content={post.content}
               authorName={userData.userName}
               authorImage={userData.profileImage || '/blank-profile.webp'}
