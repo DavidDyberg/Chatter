@@ -9,7 +9,7 @@ import { ProfileSkeleton } from '@/components/skeleton/ProfileSkeleton'
 import { PostSkeleton } from '@/components/skeleton/PostSkeleton'
 import { useState } from 'react'
 import { EditProfile } from '@/components/EditProfile'
-import { useAuth0 } from '@auth0/auth0-react'
+import { useAuth0Context } from '@/auth/auth0'
 
 export const Route = createFileRoute('/profile/$profileId')({
   component: RouteComponent,
@@ -24,7 +24,7 @@ export const Route = createFileRoute('/profile/$profileId')({
 function RouteComponent() {
   const [isEditMode, setIsEditMode] = useState(false)
   const params = useParams({ from: '/profile/$profileId' })
-  const { user: userMe } = useAuth0()
+  const { isUserMe } = useAuth0Context()
 
   const {
     data: userData,
@@ -34,14 +34,7 @@ function RouteComponent() {
     queryKey: ['user', params.profileId],
     queryFn: () => getUser(params.profileId),
   })
-
-  const isOwner = Boolean(
-    userMe?.sub &&
-      (userMe.sub === params.profileId ||
-        userData?.id === params.profileId ||
-        userData?.auth0ID === userMe.sub),
-  )
-
+  const isOwner = isUserMe(params.profileId)
   return (
     <section className="relative">
       {isPending ? (
