@@ -7,11 +7,10 @@ import {
   updateUser,
 } from "../../controllers/userController";
 import { upload } from "../../middleware/upload";
-import { checkJwt } from "../../auth/auth";
 
 export const userRouter = Router();
 
-userRouter.get("/user", checkJwt, getUsers);
+userRouter.get("/user", getUsers);
 userRouter.get("/user/:id", getUserById);
 userRouter.post(
   "/user",
