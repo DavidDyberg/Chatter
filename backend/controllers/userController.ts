@@ -7,7 +7,16 @@ const prisma = new PrismaClient();
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
+    const search = req.query.search as string;
+
     const users = await prisma.user.findMany({
+      where: {
+        userName: {
+          contains: search,
+          mode: "insensitive",
+        },
+      },
+
       include: {
         _count: {
           select: {
