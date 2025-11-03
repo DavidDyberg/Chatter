@@ -4,6 +4,7 @@ import { formatDate } from '@/utils/formatDate'
 import { useAuth0Context } from '@/auth/auth0'
 import { PopupModal } from './PopupModal'
 import { useState } from 'react'
+import { Link } from '@tanstack/react-router'
 
 type PostComponentProps = {
   content: string
@@ -19,6 +20,7 @@ type PostComponentProps = {
   onDelete?: () => void
   isDeleting?: boolean
   className?: string
+  navigateTo?: string
 }
 
 export const PostComponent: React.FC<PostComponentProps> = ({
@@ -43,15 +45,19 @@ export const PostComponent: React.FC<PostComponentProps> = ({
 
   return (
     <section onClick={onClick} className={cn('flex gap-2', className)}>
-      <img
-        className="w-12 h-12 rounded-full object-cover"
-        src={authorImage}
-        alt={`${authorName}´s profile image`}
-      />
+      <Link params={{ profileId: authorId }} to="/profile/$profileId">
+        <img
+          className="w-12 h-12 rounded-full object-cover"
+          src={authorImage}
+          alt={`${authorName}´s profile image`}
+        />
+      </Link>
       <div className="flex items-start flex-col">
         <div className="flex flex-col">
           <div className="flex gap-1 items-center">
-            <p>{authorName}</p>
+            <Link params={{ profileId: authorId }} to="/profile/$profileId">
+              <p className="hover:underline">{authorName}</p>
+            </Link>
             {isAdmin && <BadgeCheck color="#6B5FF3" size={20} />}
           </div>
           <p className="text-sm text-purple-light">{formatDate(created_at)}</p>
