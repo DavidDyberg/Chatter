@@ -1,9 +1,9 @@
-import { BadgeCheck, Heart, MessageCircle, Trash2 } from 'lucide-react'
+import { BadgeCheck, Heart, MessageCircle, Trash2, X } from 'lucide-react'
 import { cn } from '@/utils/classnames'
 import { formatDate } from '@/utils/formatDate'
 import { useAuth0Context } from '@/auth/auth0'
 import { PopupModal } from './PopupModal'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 
 type PostComponentProps = {
@@ -39,9 +39,15 @@ export const PostComponent: React.FC<PostComponentProps> = ({
   className,
 }) => {
   const [popUpModal, setPopUpModal] = useState(false)
+  const [isImagePreview, setIsImagePreview] = useState(false)
   const { isUserMe, user } = useAuth0Context()
 
   const isMyPost = isUserMe(authorId)
+
+  useEffect(() => {
+    if (isImagePreview) document.body.style.overflow = 'hidden'
+    else document.body.style.overflow = ''
+  }, [isImagePreview])
 
   return (
     <section onClick={onClick} className={cn('flex gap-2', className)}>
@@ -52,6 +58,7 @@ export const PostComponent: React.FC<PostComponentProps> = ({
           alt={`${authorName}´s profile image`}
         />
       </Link>
+
       <div className="flex items-start flex-col">
         <div className="flex flex-col">
           <div className="flex gap-1 items-center">
@@ -65,13 +72,19 @@ export const PostComponent: React.FC<PostComponentProps> = ({
 
         <div className="flex flex-col pt-2 gap-2">
           <p>{content}</p>
+
           {postImage && (
             <img
               src={postImage}
               alt="Post image"
-              className="rounded-xl max-w-[500px] w-full"
+              onClick={(e) => {
+                e.stopPropagation()
+                setIsImagePreview(true)
+              }}
+              className="rounded-xl max-w-[500px] w-full cursor-pointer transition-transform hover:scale-[1.01]"
             />
           )}
+
           <div className="flex gap-3 text-sm text-purple-light">
             <div className="flex gap-1">
               <Heart size={20} color="#aea7ff" />
@@ -83,7 +96,10 @@ export const PostComponent: React.FC<PostComponentProps> = ({
             </div>
             {(isMyPost || user?.role === 'ADMIN') && (
               <div
-                onClick={() => setPopUpModal(true)}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setPopUpModal(true)
+                }}
                 className="flex gap-1 cursor-pointer"
               >
                 <Trash2 size={20} color="#aea7ff" />
@@ -93,6 +109,7 @@ export const PostComponent: React.FC<PostComponentProps> = ({
           </div>
         </div>
       </div>
+
       {popUpModal && (
         <PopupModal
           title="Delete post"
@@ -103,6 +120,23 @@ export const PostComponent: React.FC<PostComponentProps> = ({
           action={() => onDelete?.()}
           isLoading={isDeleting}
         />
+      )}
+
+      {isImagePreview && (
+        <div
+          onClick={() => setIsImagePreview(false)}
+          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center"
+        >
+          <X
+            className="cursor-pointer absolute top-6 right-6 text-white hover:text-gray-300"
+            size={32}
+          />
+          <img
+            src={postImage}
+            alt="Full preview"
+            className="max-w-[90vw] max-h-[90vh] rounded-xl object-contain shadow-lg"
+          />
+        </div>
       )}
     </section>
   )
