@@ -72,6 +72,7 @@ function App() {
               isAdmin={post.user.role === 'ADMIN'}
               isDeleting={isDeletePending}
               onDelete={() => deletePost(post.id)}
+              navigateTo={post.user_id}
             />
           ))
         )}
