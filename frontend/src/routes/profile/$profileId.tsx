@@ -110,7 +110,7 @@ function RouteComponent() {
                       Joined {formatDate(userData?.createdAt)}
                     </p>
                   </div>
-                  {isOwner && (
+                  {(isOwner || user?.role === 'ADMIN') && (
                     <div className="flex flex-col gap-4">
                       <ButtonComponent
                         className="p-2 pl-4 pr-4"
@@ -118,15 +118,12 @@ function RouteComponent() {
                         variant="Seacondary"
                         onClick={() => setIsEditMode(true)}
                       />
-                      {isOwner ||
-                        (user?.role === 'ADMIN' && (
-                          <ButtonComponent
-                            className="p-2 pl-4 pr-4 hidden md:block"
-                            label="Delete account"
-                            variant="Delete"
-                            onClick={() => setModal(true)}
-                          />
-                        ))}
+                      <ButtonComponent
+                        className="p-2 pl-4 pr-4 hidden md:block"
+                        label="Delete account"
+                        variant="Delete"
+                        onClick={() => setModal(true)}
+                      />
                     </div>
                   )}
                 </div>
@@ -156,7 +153,7 @@ function RouteComponent() {
       {isPending ? (
         <PostSkeleton className="px-5" />
       ) : (
-        <div className="px-5 pt-5">
+        <div className="px-5 pt-5 flex flex-col gap-4">
           {userData?.posts.map((post) => (
             <PostComponent
               key={post.id}
@@ -190,7 +187,7 @@ function RouteComponent() {
       {modal && (
         <PopupModal
           title="Delete account"
-          content="Are you shure you want to delete your account, it can't be undone"
+          content={`${isOwner ? "Are you sure you want to delete your account? It can't be undone." : `Are you sure you want to delete ${userData?.userName}'s account? It can't be undone.`}`}
           buttonCloseLabel="Cancel"
           buttonActionLabel="Delete"
           onClose={() => setModal(false)}
