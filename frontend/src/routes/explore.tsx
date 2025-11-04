@@ -19,7 +19,7 @@ function RouteComponent() {
   }, [searchTerm])
 
   const { data, isFetching } = useQuery({
-    queryKey: ['users'],
+    queryKey: ['users', debouncedSearch],
     queryFn: () => searchUsers(debouncedSearch),
     enabled: debouncedSearch.length > 0,
   })
