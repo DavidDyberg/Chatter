@@ -51,13 +51,15 @@ export const PostComponent: React.FC<PostComponentProps> = ({
 
   return (
     <section onClick={onClick} className={cn('flex gap-2', className)}>
-      <Link params={{ profileId: authorId }} to="/profile/$profileId">
-        <img
-          className="max-w-12 min-h-12 rounded-full object-cover"
-          src={authorImage}
-          alt={`${authorName}´s profile image`}
-        />
-      </Link>
+      <div className="flex-shrink-0">
+        <Link params={{ profileId: authorId }} to="/profile/$profileId">
+          <img
+            className="w-12 h-12 rounded-full object-cover"
+            src={authorImage}
+            alt={`${authorName}´s profile image`}
+          />
+        </Link>
+      </div>
 
       <div className="flex items-start flex-col">
         <div className="flex flex-col">
