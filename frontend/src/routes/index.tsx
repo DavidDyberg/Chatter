@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { PostComponent } from '@/components/PostComponent'
 import { ButtonComponent } from '@/components/Button'
+import { BackendWakeMessage } from '@/components/BackendWakeMessage'
 import { useQuery } from '@tanstack/react-query'
 import { fetchPosts } from '@/api-routes/posts'
 import { PostSkeleton } from '@/components/skeleton/PostSkeleton'
@@ -54,6 +55,7 @@ function App() {
       </div>
 
       <div className="flex flex-col gap-4 pt-4">
+        <BackendWakeMessage isLoading={isPending} />
         {isPending ? (
           <PostSkeleton />
         ) : (

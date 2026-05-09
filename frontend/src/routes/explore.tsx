@@ -1,4 +1,5 @@
 import { searchUsers } from '@/api-routes/user'
+import { BackendWakeMessage } from '@/components/BackendWakeMessage'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState, useEffect } from 'react'
@@ -41,6 +42,9 @@ function RouteComponent() {
       />
 
       <div className="md:max-w-xl w-full flex flex-col gap-3 mt-4">
+        <BackendWakeMessage
+          isLoading={isFetching && debouncedSearch.length > 0}
+        />
         {isFetching && (
           <p className="text-gray-500 text-center animate-pulse">
             Searching users...

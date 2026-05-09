@@ -2,6 +2,7 @@ import { deleteAccount, getUser } from '@/api-routes/user'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { BadgeCheck, ChevronsDown } from 'lucide-react'
+import { BackendWakeMessage } from '@/components/BackendWakeMessage'
 import { ButtonComponent } from '@/components/Button'
 import { formatDate } from '@/utils/formatDate'
 import { PostComponent } from '@/components/PostComponent'
@@ -63,6 +64,7 @@ function RouteComponent() {
   const isOwner = isUserMe(params.profileId)
   return (
     <section className="relative">
+      <BackendWakeMessage isLoading={isPending} />
       {isPending ? (
         <ProfileSkeleton />
       ) : (
