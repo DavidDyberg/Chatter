@@ -7,7 +7,7 @@ type BackendWakeMessageProps = {
 
 export const BackendWakeMessage: React.FC<BackendWakeMessageProps> = ({
   isLoading,
-  message = 'Backend service is starting from being idle, and an estimated time of 1-5 minutes.',
+  message = 'Backend service is starting from being idle, and an estimated time of 1-2 minutes.',
 }) => {
   const [showMessage, setShowMessage] = useState(false)
 
